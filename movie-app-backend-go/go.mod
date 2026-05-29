@@ -8,6 +8,7 @@ require (
 	github.com/hibiken/asynq v0.25.1
 	github.com/joho/godotenv v1.5.1
 	github.com/redis/go-redis/v9 v9.12.1
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/xuri/excelize/v2 v2.9.1
 	golang.org/x/crypto v0.41.0
 	gorm.io/driver/postgres v1.6.0
@@ -43,7 +44,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.4 // indirect
-	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/spf13/cast v1.9.2 // indirect
 	github.com/tiendc/go-deepcopy v1.6.0 // indirect

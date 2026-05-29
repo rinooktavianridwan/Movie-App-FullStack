@@ -77,7 +77,7 @@ export default function AdminMovies() {
       title: movie.title, 
       duration: movie.duration, 
       overview: movie.overview, 
-      genre_ids: movie.movie_genres ? movie.movie_genres.map(mg => mg.genre.id) : [] 
+      genre_ids: movie.genres ? movie.genres.map((g) => g.id) : [] 
     });
     setPosterFile(null);
     setCrudError('');
@@ -301,10 +301,10 @@ export default function AdminMovies() {
                         </td>
                         <td className="p-5 text-gray-400 whitespace-normal">
                           <div className="flex flex-wrap gap-1.5 max-w-[250px]">
-                            {movie.movie_genres && movie.movie_genres.length > 0 ? (
-                              movie.movie_genres.map(mg => (
-                                <span key={mg.genre.id} className="inline-block px-2 py-0.5 bg-brand-700/40 text-brand-primary text-xs rounded-full border border-brand-primary/20">
-                                  {mg.genre.name}
+                            {movie.genres && movie.genres.length > 0 ? (
+                              movie.genres.map((g) => (
+                                <span key={g.id} className="inline-block px-2 py-0.5 bg-brand-700/40 text-brand-primary text-xs rounded-full border border-brand-primary/20">
+                                  {g.name}
                                </span>
                               ))
                             ) : (

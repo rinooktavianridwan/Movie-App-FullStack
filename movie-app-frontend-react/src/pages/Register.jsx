@@ -21,10 +21,7 @@ export default function Register() {
       navigate('/login');
     } catch (err) {
       console.error(err);
-      setError('Registration failed. Please try again.');
-      
-      // Fallback transition for demo
-      setTimeout(() => navigate('/login'), 1500);
+      setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }

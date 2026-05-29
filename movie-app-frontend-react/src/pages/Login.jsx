@@ -17,20 +17,12 @@ export default function Login() {
     setError('');
     try {
       const response = await api.post('/auth/login', { email, password });
-      let loggedToken, loggedUser;
-      
-      if (response.data && response.data.data && response.data.data.token) {
-        loggedToken = response.data.data.token;
-        loggedUser = response.data.data.user;
-      } else if (response.data && response.data.token) {
-        loggedToken = response.data.token;
-        loggedUser = response.data.user;
-      } else {
-        // Fallback for simple tests
-        loggedToken = 'demo-token';
-        loggedUser = { role: 'admin' };
+      const loggedToken = response.data?.data?.token;
+      const loggedUser = response.data?.data?.user;
+      if (!loggedToken || !loggedUser) {
+        throw new Error('Invalid login response');
       }
-      
+
       login(loggedToken, loggedUser);
       
       const isAdmin = loggedUser?.role_id === 1 || loggedUser?.role?.name?.toLowerCase() === 'admin' || loggedUser?.role === 'admin';
@@ -41,13 +33,7 @@ export default function Login() {
       }
     } catch (err) {
       console.error(err);
-      // Fallback if backend is not easily accessible via this post
-      // In production you would set an actual error:
-      // setError('Login failed. Please check your credentials.');
-      
-      // Providing a fallback demo login to satisfy "ngeceknya belakangan" workflow
-      login('demo-token', { role: 'admin' });
-      navigate('/admin');
+      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
