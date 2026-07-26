@@ -26,9 +26,8 @@ export default function Login() {
         loggedToken = response.data.token;
         loggedUser = response.data.user;
       } else {
-        // Fallback for simple tests
-        loggedToken = 'demo-token';
-        loggedUser = { role: 'admin' };
+        setError('Unexpected response from server.');
+        return;
       }
       
       login(loggedToken, loggedUser);
@@ -41,13 +40,13 @@ export default function Login() {
       }
     } catch (err) {
       console.error(err);
-      // Fallback if backend is not easily accessible via this post
-      // In production you would set an actual error:
-      // setError('Login failed. Please check your credentials.');
-      
-      // Providing a fallback demo login to satisfy "ngeceknya belakangan" workflow
-      login('demo-token', { role: 'admin' });
-      navigate('/admin');
+      if (err.code === 'ERR_NETWORK') {
+        setError('Cannot connect to server. Please try again later.');
+      } else if (err.response?.status === 401) {
+        setError('Invalid email or password.');
+      } else {
+        setError('Login failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

@@ -44,7 +44,7 @@ export default function Home() {
               Now Playing
             </h2>
             <button className="text-brand-primary hover:text-white transition-colors text-sm font-medium">
-              View All
+              View All →
             </button>
           </div>
           {loading ? (

@@ -5,7 +5,7 @@ type StandardResponse struct {
 	Message    string      `json:"message"`
 	Version    string      `json:"version"`
 	Data       interface{} `json:"data"`
-	Error      string      `json:"error,omitempty"`
+	ErrMsg     string      `json:"error,omitempty"`
 }
 
 func SuccessResponse(statusCode int, message string, data interface{}) StandardResponse {
@@ -17,31 +17,31 @@ func SuccessResponse(statusCode int, message string, data interface{}) StandardR
 	}
 }
 
-func ErrorResponse(statusCode int, error string) StandardResponse {
+func ErrorResponse(statusCode int, errMsg string) StandardResponse {
 	return StandardResponse{
 		StatusCode: statusCode,
-		Message:    error,
+		Message:    errMsg,
 		Version:    "1.0.0",
 		Data:       nil,
 	}
 }
 
-func BadRequestResponse(error string) StandardResponse {
-	return ErrorResponse(400,  error)
+func BadRequestResponse(errMsg string) StandardResponse {
+	return ErrorResponse(400, errMsg)
 }
 
-func UnauthorizedResponse(error string) StandardResponse {
-	return ErrorResponse(401, error)
+func UnauthorizedResponse(errMsg string) StandardResponse {
+	return ErrorResponse(401, errMsg)
 }
 
-func ForbiddenResponse(error string) StandardResponse {
-	return ErrorResponse(403, error)
+func ForbiddenResponse(errMsg string) StandardResponse {
+	return ErrorResponse(403, errMsg)
 }
 
-func NotFoundResponse(error string) StandardResponse {
-	return ErrorResponse(404, error)
+func NotFoundResponse(errMsg string) StandardResponse {
+	return ErrorResponse(404, errMsg)
 }
 
-func InternalServerErrorResponse(error string) StandardResponse {
-	return ErrorResponse(500, error)
+func InternalServerErrorResponse(errMsg string) StandardResponse {
+	return ErrorResponse(500, errMsg)
 }

@@ -42,7 +42,7 @@ export default function HeroSection() {
               <CalendarDays className="h-5 w-5" />
               Book Tickets
             </button>
-            <button className="glass-panel border-none bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-xl font-medium transition-all duration-300 flex items-center gap-2 text-lg">
+            <button disabled className="glass-panel border-none bg-white/10 text-white/50 px-6 py-2 rounded-xl font-medium transition-all duration-300 flex items-center gap-2 text-lg cursor-not-allowed">
               <Play className="h-5 w-5" />
               Watch Trailer
             </button>

@@ -32,7 +32,10 @@ export default function MovieCard({ id, title, genre, rating, image, duration })
             <span className="text-sm text-brand-primary font-medium">{genre}</span>
             <span className="text-xs text-gray-400">{duration}</span>
           </div>
-          <button className="bg-brand-primary text-white text-sm px-4 py-1.5 rounded-lg hover:bg-violet-500 hover:shadow-[0_0_10px_rgba(139,92,246,0.6)] transition-all">
+          <button 
+            onClick={(e) => { e.stopPropagation(); navigate(`/movies/${id}`); }}
+            className="bg-brand-primary text-white text-sm px-4 py-1.5 rounded-lg hover:bg-violet-500 hover:shadow-[0_0_10px_rgba(139,92,246,0.6)] transition-all"
+          >
             Get Tickets
           </button>
         </div>

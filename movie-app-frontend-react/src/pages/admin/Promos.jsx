@@ -333,7 +333,7 @@ export default function AdminPromos() {
                   Cancel
                 </button>
                 <button type="submit" className="px-6 py-2.5 bg-brand-primary text-brand-900 font-bold rounded-lg hover:bg-brand-primary/90 transition-colors shadow-lg">
-                  Save Disount Configuration
+                  Save Discount Configuration
                 </button>
               </div>
             </form>

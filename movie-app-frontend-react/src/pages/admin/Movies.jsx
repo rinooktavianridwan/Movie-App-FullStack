@@ -61,6 +61,13 @@ export default function AdminMovies() {
     }
   };
 
+  useEffect(() => {
+    if (tmdbStatus) {
+      const timer = setTimeout(() => setTMDBStatus(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [tmdbStatus]);
+
   const openAddModal = () => {
     setCrudMode('add');
     setSelectedMovie(null);

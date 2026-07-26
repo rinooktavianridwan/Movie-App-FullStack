@@ -25,7 +25,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="text-gray-300 hover:text-white transition-colors duration-200 p-2">
+            <button disabled className="text-gray-500 p-2 cursor-not-allowed" title="Search coming soon">
               <Search className="h-5 w-5" />
             </button>
             {token ? (

@@ -2,7 +2,7 @@ package utils
 
 import "errors"
 
-// Eentity not found errors
+// Entity not found errors
 var (
 	ErrMovieNotFound        = errors.New("movie not found")
 	ErrGenreNotFound        = errors.New("genre not found")

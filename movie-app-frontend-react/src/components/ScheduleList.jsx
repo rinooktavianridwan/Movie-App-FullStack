@@ -68,7 +68,8 @@ export default function ScheduleList() {
                     {studio.showtimes?.map((time, tIdx) => (
                       <button 
                         key={tIdx} 
-                        className="flex items-center gap-1 bg-brand-800 hover:bg-brand-primary hover:text-white text-brand-secondary border border-brand-700 hover:border-brand-primary px-3 py-1.5 rounded-lg text-sm transition-colors duration-200"
+                        disabled
+                        className="flex items-center gap-1 bg-brand-800 text-brand-secondary border border-brand-700 px-3 py-1.5 rounded-lg text-sm cursor-not-allowed opacity-60"
                       >
                         <Clock className="h-3 w-3" />
                         {time}
