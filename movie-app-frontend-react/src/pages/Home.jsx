@@ -39,7 +39,7 @@ export default function Home() {
               Now Playing
             </h2>
             <button className="text-brand-primary hover:text-white transition-colors text-sm font-medium">
-              View All
+              View All →
             </button>
           </div>
           {loading ? (
@@ -56,6 +56,7 @@ export default function Home() {
                   id={movie.id}
                   title={movie.title}
                   genre={movie.genres?.map((g) => g.name).join(', ') || 'General'}
+                  rating={movie.rating}
                   duration={movie.duration ? `${movie.duration} min` : undefined}
                   image={movie.poster_url}
                 />

@@ -27,6 +27,7 @@ export default function AdminGenres() {
 
   useEffect(() => {
     fetchGenres();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const openAddModal = () => {

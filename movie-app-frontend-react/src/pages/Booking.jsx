@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
@@ -15,6 +15,13 @@ export default function Booking() {
   const [error, setError] = useState('');
   const [submitError, setSubmitError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const successTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -77,7 +84,7 @@ export default function Booking() {
       });
       setSuccessMessage('Booking created successfully. Please complete payment.');
       setSelectedSeats([]);
-      setTimeout(() => navigate('/'), 1500);
+      successTimeoutRef.current = setTimeout(() => navigate('/'), 1500);
     } catch (err) {
       setSubmitError(err.response?.data?.message || 'Failed to create booking.');
     } finally {

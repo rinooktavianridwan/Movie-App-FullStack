@@ -62,7 +62,7 @@ export default function MovieDetails() {
   const poster =
     movie.poster_url ||
     'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1200&auto=format&fit=crop';
-  const ratingValue = movie.rating || movie.vote_average;
+  const ratingValue = movie.rating ?? movie.vote_average;
   const firstSchedule = schedules[0];
 
   return (
@@ -127,7 +127,7 @@ export default function MovieDetails() {
                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
                    {firstSchedule ? 'Book Tickets Now' : 'No Showtimes Available'}
                </button>
-               <button className="px-8 py-4 glass-panel text-white font-bold rounded-xl text-lg hover:bg-white/10 transition-colors flex items-center gap-3 justify-center">
+               <button disabled className="px-8 py-4 glass-panel text-white/50 font-bold rounded-xl text-lg cursor-not-allowed flex items-center gap-3 justify-center">
                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                    Watch Trailer
                </button>

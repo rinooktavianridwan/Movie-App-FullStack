@@ -1,9 +1,16 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Film, Search, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { isAdmin } from '../utils/auth';
 
 export default function Navbar() {
   const { user, token, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
   return (
     <nav className="fixed top-0 w-full z-50 glass-panel border-x-0 border-t-0 rounded-none from-brand-900 to-transparent bg-gradient-to-b">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -30,14 +37,14 @@ export default function Navbar() {
             </button>
             {token ? (
                 <div className="flex items-center gap-4">
-                  {(user?.role_id === 1 || user?.role?.name?.toLowerCase() === 'admin' || user?.role === 'admin') && (
+                  {isAdmin(user) && (
                     <Link to="/admin" className="text-gray-300 hover:text-brand-primary hidden sm:flex items-center gap-2 text-sm font-medium transition-colors">
                       <LayoutDashboard className="h-4 w-4" />
                       Dashboard
                     </Link>
                   )}
                   <button 
-                    onClick={logout}
+                    onClick={handleLogout}
                     className="flex items-center gap-2 btn-secondary bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500/20 px-3 py-2 rounded-lg transition-colors"
                   >
                     <LogOut className="h-4 w-4" />

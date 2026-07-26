@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { isAdmin } from '../utils/auth';
 import api from '../services/api';
 
 export default function Login() {
@@ -25,8 +26,7 @@ export default function Login() {
 
       login(loggedToken, loggedUser);
       
-      const isAdmin = loggedUser?.role_id === 1 || loggedUser?.role?.name?.toLowerCase() === 'admin' || loggedUser?.role === 'admin';
-      if (isAdmin) {
+      if (isAdmin(loggedUser)) {
         navigate('/admin');
       } else {
         navigate('/');

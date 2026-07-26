@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 export default function PromoValidator() {
   const { token } = useAuth();
   const [promoCode, setPromoCode] = useState('');
-  const [totalPrice, setTotalPrice] = useState(150000);
+  const [totalPrice, setTotalPrice] = useState(0);
   const [ticketCount, setTicketCount] = useState(1);
   const [movies, setMovies] = useState([]);
   const [selectedMovieId, setSelectedMovieId] = useState('');
@@ -135,7 +135,7 @@ export default function PromoValidator() {
         </form>
 
         {!token && (
-          <p className="text-xs text-yellow-400">Login terlebih dahulu untuk memvalidasi promo.</p>
+          <p className="text-xs text-yellow-400">Please log in to validate a promo code.</p>
         )}
 
         {result && (

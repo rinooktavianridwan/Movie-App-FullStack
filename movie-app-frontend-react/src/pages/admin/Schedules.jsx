@@ -49,6 +49,7 @@ export default function AdminSchedules() {
   useEffect(() => {
     fetchDependencies();
     fetchSchedules();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const openAddModal = () => {
@@ -266,7 +267,7 @@ export default function AdminSchedules() {
                             <span className="text-xs text-brand-primary">{new Date(sched.start_time).toLocaleTimeString()} - {new Date(sched.end_time).toLocaleTimeString()}</span>
                           </div>
                         </td>
-                        <td className="p-5 text-green-400">Rp {parseInt(sched.price).toLocaleString()}</td>
+                        <td className="p-5 text-green-400">Rp {Number(sched.price).toLocaleString()}</td>
                         <td className="p-5 text-right flex justify-end gap-3 items-center mt-2">
                             <button onClick={() => openEditModal(sched)} className="text-brand-primary hover:text-white transition-colors p-2 rounded hover:bg-brand-primary/20" title="Edit">
                                 <Pencil className="h-4 w-4" />

@@ -15,9 +15,9 @@ export default function ScheduleList() {
         setError('');
         const response = await api.get('/schedules/grouped?per_page=10');
         setSchedules(response.data?.data?.data || []);
-      } catch (error) {
-        console.error("Failed to fetch schedules:", error);
-        setError(error.response?.data?.message || 'Failed to fetch schedules.');
+      } catch (err) {
+        console.error("Failed to fetch schedules:", err);
+        setError(err.response?.data?.message || 'Failed to fetch schedules.');
       } finally {
         setLoading(false);
       }
@@ -53,12 +53,12 @@ export default function ScheduleList() {
           const studioList = studioMap ? Object.values(studioMap) : [];
 
           return (
-          <div key={idx} className="glass-panel p-6 border-l-4 border-l-brand-primary">
+          <div key={movieGroup.movie?.id || idx} className="glass-panel p-6 border-l-4 border-l-brand-primary">
             <h3 className="text-2xl font-bold text-white mb-4">{movieGroup.movie?.title}</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {studioList.map((studio, sIdx) => (
-                <div key={sIdx} className="bg-brand-900/50 rounded-xl p-4 border border-brand-700">
+                <div key={studio.id || sIdx} className="bg-brand-900/50 rounded-xl p-4 border border-brand-700">
                   <div className="flex items-center gap-2 mb-3 text-gray-300 font-medium">
                     <MapPin className="h-4 w-4 text-brand-accent" />
                     {studio.name}

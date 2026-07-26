@@ -31,7 +31,9 @@ func Auth() gin.HandlerFunc {
 		tokenString := parts[1]
 		secret := os.Getenv("JWT_SECRET")
 		if secret == "" {
-			secret = "secret"
+			c.JSON(http.StatusInternalServerError, utils.InternalServerErrorResponse("JWT_SECRET is not configured"))
+			c.Abort()
+			return
 		}
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
