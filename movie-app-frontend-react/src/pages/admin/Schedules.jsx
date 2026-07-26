@@ -170,7 +170,7 @@ export default function AdminSchedules() {
                     required
                   >
                     <option value="" disabled>Select Studio</option>
-                    {studios.map(s => <option key={s.id} value={s.id}>{s.name} ({s.capacity} seats)</option>)}
+                    {studios.map(s => <option key={s.id} value={s.id}>{s.name} ({s.seat_capacity} seats)</option>)}
                   </select>
                 </div>
               </div>

@@ -8,21 +8,16 @@ import api from '../services/api';
 export default function Home() {
   const [featuredMovies, setFeaturedMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const res = await api.get('/movies');
+        const res = await api.get('/movies?per_page=12');
         setFeaturedMovies(res.data?.data?.data || []);
       } catch (err) {
         console.error('Failed to fetch movies:', err);
-        // Fallback for demonstration since backend might not be seeded or matching url yet
-        setFeaturedMovies([
-          { id: 1, title: "Interstellar Odyssey", genre: "Action, Sci-Fi", rating: "4.9", duration: "2h 45m", image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&auto=format&fit=crop" },
-          { id: 2, title: "Dune: Part Two", genre: "Sci-Fi, Adventure", rating: "4.8", duration: "2h 46m", image: "https://images.unsplash.com/photo-1618477388954-7f15bce3240b?q=80&w=600&auto=format&fit=crop" },
-          { id: 3, title: "Neon City", genre: "Cyberpunk, Thriller", rating: "4.5", duration: "1h 58m", image: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=600&auto=format&fit=crop" },
-          { id: 4, title: "The Last Dawn", genre: "Drama, Survival", rating: "4.7", duration: "2h 12m", image: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=600&auto=format&fit=crop" }
-        ]);
+        setError(err.response?.data?.message || 'Failed to fetch movies.');
       } finally {
         setLoading(false);
       }
@@ -32,7 +27,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-20 pb-20">
-      <HeroSection />
+      <HeroSection movie={featuredMovies[0]} />
       
       <main className="max-w-7xl mx-auto px-6 lg:px-8 w-full flex flex-col gap-24">
         
@@ -44,16 +39,27 @@ export default function Home() {
               Now Playing
             </h2>
             <button className="text-brand-primary hover:text-white transition-colors text-sm font-medium">
-              View All →
+              View All
             </button>
           </div>
           {loading ? (
-             <div className="text-center text-gray-500 py-12">Loading movies...</div>
+            <div className="text-center text-gray-500 py-12">Loading movies...</div>
+          ) : error ? (
+            <div className="text-center text-red-400 py-12">{error}</div>
+          ) : featuredMovies.length === 0 ? (
+            <div className="text-center text-gray-500 py-12">No movies available.</div>
           ) : (
-             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {featuredMovies.map((movie) => (
-                  <MovieCard key={movie.id} {...movie} />
-                ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredMovies.map((movie) => (
+                <MovieCard
+                  key={movie.id}
+                  id={movie.id}
+                  title={movie.title}
+                  genre={movie.genres?.map((g) => g.name).join(', ') || 'General'}
+                  duration={movie.duration ? `${movie.duration} min` : undefined}
+                  image={movie.poster_url}
+                />
+              ))}
             </div>
           )}
         </section>

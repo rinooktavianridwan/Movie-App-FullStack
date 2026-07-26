@@ -97,7 +97,7 @@ export default function AdminPromos() {
       is_active: p.is_active,
       valid_from: formatLocalToDatetime(p.valid_from),
       valid_until: formatLocalToDatetime(p.valid_until),
-      movie_ids: p.promo_movies ? p.promo_movies.map(pm => pm.movie.id) : []
+      movie_ids: p.movies ? p.movies.map((pm) => pm.movie_id) : []
     });
     setApiError('');
     setShowModal(true);
@@ -333,7 +333,7 @@ export default function AdminPromos() {
                   Cancel
                 </button>
                 <button type="submit" className="px-6 py-2.5 bg-brand-primary text-brand-900 font-bold rounded-lg hover:bg-brand-primary/90 transition-colors shadow-lg">
-                  Save Discount Configuration
+                  Save Disount Configuration
                 </button>
               </div>
             </form>
@@ -380,7 +380,7 @@ export default function AdminPromos() {
                         <td className="p-5 text-gray-300 font-medium">{promo.name}</td>
                         <td className="p-5">
                           <span className="text-brand-primary font-bold">
-                            {promo.discount_type === 'percentage' ? `${promo.discount_value}% OFF` : `Rp ${promo.discount_value.toLocaleString()} OFF`}
+                            {promo.discount_type === 'percentage' ? `${promo.discount_value}% OFF` : `Rp ${Number(promo.discount_value).toLocaleString('id-ID')} OFF`}
                           </span>
                         </td>
                         <td className="p-5 text-gray-400 text-sm">

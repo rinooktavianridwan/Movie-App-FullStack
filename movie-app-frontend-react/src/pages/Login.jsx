@@ -17,19 +17,12 @@ export default function Login() {
     setError('');
     try {
       const response = await api.post('/auth/login', { email, password });
-      let loggedToken, loggedUser;
-      
-      if (response.data && response.data.data && response.data.data.token) {
-        loggedToken = response.data.data.token;
-        loggedUser = response.data.data.user;
-      } else if (response.data && response.data.token) {
-        loggedToken = response.data.token;
-        loggedUser = response.data.user;
-      } else {
-        setError('Unexpected response from server.');
-        return;
+      const loggedToken = response.data?.data?.token;
+      const loggedUser = response.data?.data?.user;
+      if (!loggedToken || !loggedUser) {
+        throw new Error('Invalid login response');
       }
-      
+
       login(loggedToken, loggedUser);
       
       const isAdmin = loggedUser?.role_id === 1 || loggedUser?.role?.name?.toLowerCase() === 'admin' || loggedUser?.role === 'admin';
@@ -40,13 +33,7 @@ export default function Login() {
       }
     } catch (err) {
       console.error(err);
-      if (err.code === 'ERR_NETWORK') {
-        setError('Cannot connect to server. Please try again later.');
-      } else if (err.response?.status === 401) {
-        setError('Invalid email or password.');
-      } else {
-        setError('Login failed. Please try again.');
-      }
+      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
