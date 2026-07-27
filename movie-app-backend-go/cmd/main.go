@@ -41,6 +41,8 @@ func main() {
 		return
 	}
 
+	database.RunMigrations()
+
 	queueService := jobs.NewQueueService(redisAddr)
 	workerService := jobs.NewWorkerService(redisAddr, db)
 
