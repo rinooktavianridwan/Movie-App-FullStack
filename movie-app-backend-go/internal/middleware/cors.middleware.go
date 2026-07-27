@@ -10,7 +10,7 @@ func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		origin := os.Getenv("CORS_ORIGIN")
 		if origin == "" {
-			origin = "http://localhost:5173"
+			origin = "https://movie-app.rinooktavianridwan.site"
 		}
 		c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
