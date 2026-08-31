@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import Pagination from '../../components/Pagination';
 import { X, Plus, Pencil, Trash2, Image as ImageIcon, RefreshCw } from 'lucide-react';
 
 export default function AdminMovies() {
   const [movies, setMovies] = useState([]);
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   // TMDB Fetch
   const [isFetchingTMDB, setIsFetchingTMDB] = useState(false);
@@ -21,16 +24,19 @@ export default function AdminMovies() {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    fetchMovies();
+    fetchMovies(1);
     fetchGenres();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchMovies = async () => {
+  const fetchMovies = async (p = page) => {
     try {
       setLoading(true);
-      const response = await api.get('/movies?per_page=100');
-      setMovies(response.data?.data?.data || []);
+      const response = await api.get(`/movies?page=${p}&per_page=10`);
+      const d = response.data?.data;
+      setMovies(d?.data || []);
+      setPage(d?.page || 1);
+      setTotalPages(d?.total_page || 1);
     } catch (err) {
       console.error(err);
     } finally {
@@ -54,7 +60,7 @@ export default function AdminMovies() {
     try {
       await api.post('/admin/movies/fetch-tmdb');
       setTMDBStatus({ type: 'success', message: 'Berhasil fetch movie dari TMDB!' });
-      fetchMovies();
+      fetchMovies(1);
     } catch (err) {
       setTMDBStatus({ type: 'error', message: err.response?.data?.message || 'Gagal fetch movie dari TMDB' });
     } finally {
@@ -120,7 +126,7 @@ export default function AdminMovies() {
       }
 
       setShowCrudModal(false);
-      fetchMovies();
+      fetchMovies(1);
     } catch (err) {
       setCrudError(err.response?.data?.message || `Failed to ${crudMode} movie`);
     } finally {
@@ -132,7 +138,7 @@ export default function AdminMovies() {
     if (!window.confirm('Are you sure you want to delete this movie? This will permanently remove it from the system.')) return;
     try {
       await api.delete(`/movies/${id}`);
-      fetchMovies();
+      fetchMovies(1);
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to delete movie');
     }
@@ -330,6 +336,7 @@ export default function AdminMovies() {
             </tbody>
             </table>
         </div>
+        <Pagination page={page} totalPages={totalPages} onPageChange={fetchMovies} />
       </div>
     </div>
   );

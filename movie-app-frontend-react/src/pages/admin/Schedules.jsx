@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import Pagination from '../../components/Pagination';
 import { Pencil, Trash2, Plus, X, Clock } from 'lucide-react';
 
 export default function AdminSchedules() {
@@ -7,6 +8,8 @@ export default function AdminSchedules() {
   const [movies, setMovies] = useState([]);
   const [studios, setStudios] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   
   // Modal states
   const [showModal, setShowModal] = useState(false);
@@ -34,11 +37,14 @@ export default function AdminSchedules() {
     }
   };
 
-  const fetchSchedules = async () => {
+  const fetchSchedules = async (p = page) => {
     setLoading(true);
     try {
-      const response = await api.get('/schedules?per_page=100');
-      setSchedules(response.data?.data?.data || []);
+      const response = await api.get(`/schedules?page=${p}&per_page=10`);
+      const d = response.data?.data;
+      setSchedules(d?.data || []);
+      setPage(d?.page || 1);
+      setTotalPages(d?.total_page || 1);
     } catch (err) {
       console.error('Error fetching schedules:', err);
     } finally {
@@ -48,7 +54,7 @@ export default function AdminSchedules() {
 
   useEffect(() => {
     fetchDependencies();
-    fetchSchedules();
+    fetchSchedules(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -114,7 +120,7 @@ export default function AdminSchedules() {
         await api.put(`/schedules/${selectedId}`, payload);
       }
       setShowModal(false);
-      fetchSchedules();
+      fetchSchedules(1);
     } catch (err) {
       setApiError(err.response?.data?.message || `Failed to ${modalMode} schedule`);
     }
@@ -124,7 +130,7 @@ export default function AdminSchedules() {
     if (!window.confirm('Are you sure you want to delete this schedule? This action cannot be undone.')) return;
     try {
       await api.delete(`/schedules/${id}`);
-      fetchSchedules();
+      fetchSchedules(1);
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to delete schedule.');
     }
@@ -282,6 +288,7 @@ export default function AdminSchedules() {
             </tbody>
             </table>
         </div>
+        <Pagination page={page} totalPages={totalPages} onPageChange={fetchSchedules} />
       </div>
     </div>
   );

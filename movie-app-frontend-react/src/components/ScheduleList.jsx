@@ -29,15 +29,29 @@ export default function ScheduleList() {
   if (error) return <div className="text-center py-10 text-red-400">{error}</div>;
   if (schedules.length === 0) return <div className="text-center py-10 text-gray-500">No schedules available.</div>;
 
+  const visibleSchedules = schedules.slice(0, 3);
+  const hasMoreSchedules = schedules.length > 3;
+
   return (
     <div className="w-full">
-      <div className="flex items-center gap-3 mb-8">
-        <Calendar className="h-8 w-8 text-brand-primary" />
-        <h2 className="text-3xl font-bold text-white">Today's Schedule</h2>
+      <div className="flex items-center justify-between gap-3 mb-8">
+        <div className="flex items-center gap-3">
+          <Calendar className="h-8 w-8 text-brand-primary" />
+          <h2 className="text-3xl font-bold text-white">Today's Schedule</h2>
+        </div>
+        {hasMoreSchedules && (
+          <button
+            type="button"
+            onClick={() => navigate('/schedules')}
+            className="text-brand-primary hover:text-white transition-colors text-sm font-medium"
+          >
+            View All →
+          </button>
+        )}
       </div>
 
       <div className="space-y-6">
-        {schedules.map((movieGroup, idx) => {
+        {visibleSchedules.map((movieGroup, idx) => {
           const studioMap = movieGroup.schedules?.reduce((acc, sched) => {
             const key = sched.studio?.id || sched.studio_id;
             if (!acc[key]) {
@@ -56,7 +70,7 @@ export default function ScheduleList() {
           <div key={movieGroup.movie?.id || idx} className="glass-panel p-6 border-l-4 border-l-brand-primary">
             <h3 className="text-2xl font-bold text-white mb-4">{movieGroup.movie?.title}</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {studioList.map((studio, sIdx) => (
                 <div key={studio.id || sIdx} className="bg-brand-900/50 rounded-xl p-4 border border-brand-700">
                   <div className="flex items-center gap-2 mb-3 text-gray-300 font-medium">
@@ -67,6 +81,7 @@ export default function ScheduleList() {
                     {studio.schedules?.map((sched) => (
                       <button 
                         key={sched.id} 
+                        type="button"
                         onClick={() => navigate(`/booking/${sched.id}`)}
                         className="flex items-center gap-1 bg-brand-800 hover:bg-brand-primary hover:text-white text-brand-secondary border border-brand-700 hover:border-brand-primary px-3 py-1.5 rounded-lg text-sm transition-colors duration-200"
                       >

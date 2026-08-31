@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import HeroSection from '../components/HeroSection';
 import MovieCard from '../components/MovieCard';
 import ScheduleList from '../components/ScheduleList';
@@ -9,6 +10,7 @@ export default function Home() {
   const [featuredMovies, setFeaturedMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -25,6 +27,8 @@ export default function Home() {
     fetchMovies();
   }, []);
 
+  const visibleMovies = featuredMovies.slice(0, window.innerWidth < 768 ? 6 : 4);
+
   return (
     <div className="flex flex-col gap-20 pb-20">
       <HeroSection movie={featuredMovies[0]} />
@@ -38,9 +42,15 @@ export default function Home() {
               <span className="w-2 h-8 bg-brand-primary rounded-full"></span>
               Now Playing
             </h2>
-            <button className="text-brand-primary hover:text-white transition-colors text-sm font-medium">
-              View All →
-            </button>
+            {featuredMovies.length > (window.innerWidth < 768 ? 6 : 4) && (
+              <button
+                type="button"
+                onClick={() => navigate('/movies')}
+                className="text-brand-primary hover:text-white transition-colors text-sm font-medium"
+              >
+                View All →
+              </button>
+            )}
           </div>
           {loading ? (
             <div className="text-center text-gray-500 py-12">Loading movies...</div>
@@ -49,8 +59,8 @@ export default function Home() {
           ) : featuredMovies.length === 0 ? (
             <div className="text-center text-gray-500 py-12">No movies available.</div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredMovies.map((movie) => (
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+              {visibleMovies.map((movie) => (
                 <MovieCard
                   key={movie.id}
                   id={movie.id}

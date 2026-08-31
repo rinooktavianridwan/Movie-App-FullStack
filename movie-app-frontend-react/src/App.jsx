@@ -3,6 +3,8 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { isAdmin } from './utils/auth';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
+import MoviesPage from './pages/MoviesPage';
+import SchedulesPage from './pages/SchedulesPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import MovieDetails from './pages/MovieDetails';
@@ -46,6 +48,8 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+          <Route path="/movies" element={<PublicLayout><MoviesPage /></PublicLayout>} />
+          <Route path="/schedules" element={<PublicLayout><SchedulesPage /></PublicLayout>} />
           <Route path="/movies/:id" element={<PublicLayout><MovieDetails /></PublicLayout>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

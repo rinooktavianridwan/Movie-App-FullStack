@@ -65,7 +65,7 @@ export default function PromoValidator() {
   };
 
   return (
-    <div className="glass-panel p-6 max-w-md w-full mx-auto relative overflow-hidden">
+    <div className="glass-panel p-6 max-w-md w-full mx-auto relative overflow-visible">
         {/* Glow effect */}
         <div className="absolute top-0 right-0 -mr-10 -mt-10 w-32 h-32 rounded-full bg-brand-primary/20 blur-3xl pointer-events-none"></div>
 
@@ -116,18 +116,18 @@ export default function PromoValidator() {
               />
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch min-w-0">
               <input 
                   type="text" 
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                   placeholder="PROMO CODE"
-                  className="flex-1 bg-brand-800 border border-brand-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-primary uppercase tracking-widest placeholder:text-gray-500 placeholder:tracking-normal"
+                  className="flex-1 min-w-0 bg-brand-800 border border-brand-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-brand-primary uppercase tracking-widest placeholder:text-gray-500 placeholder:tracking-normal"
               />
               <button 
                   type="submit" 
                   disabled={loading || !isFormValid}
-                  className="btn-primary py-2 px-4 rounded-lg flex items-center justify-center min-w-[100px] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-primary py-2 px-4 rounded-lg flex items-center justify-center min-w-[100px] w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
               >
                   {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Apply'}
               </button>

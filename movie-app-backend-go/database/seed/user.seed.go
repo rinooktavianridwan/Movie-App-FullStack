@@ -1,6 +1,10 @@
 package seed
 
 import (
+	"fmt"
+	"log"
+	"os"
+
 	"movie-app-go/internal/models"
 
 	"golang.org/x/crypto/bcrypt"
@@ -8,37 +12,33 @@ import (
 )
 
 func SeedUsers(db *gorm.DB) error {
-	var adminRole, customerRole models.Role
+	var adminRole models.Role
 	if err := db.Where("name = ?", "admin").First(&adminRole).Error; err != nil {
 		return err
 	}
-	if err := db.Where("name = ?", "customer").First(&customerRole).Error; err != nil {
+
+	email := os.Getenv("SEEDER_EMAIL")
+	password := os.Getenv("SEEDER_PASSWORD")
+	if email == "" || password == "" {
+		return fmt.Errorf("SEEDER_EMAIL and SEEDER_PASSWORD must be set in .env")
+	}
+
+	hashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
 		return err
 	}
 
-	users := []models.User{
-		{Name: "Admin", Email: "admin@bioskop.com", Password: "admin123", RoleID: &adminRole.ID},
-		{Name: "User", Email: "user@bioskop.com", Password: "user123", RoleID: &customerRole.ID},
-		{Name: "Alice", Email: "alice@mail.com", Password: "alice123", RoleID: &customerRole.ID},
-		{Name: "Bob", Email: "bob@mail.com", Password: "bob123", RoleID: &customerRole.ID},
-		{Name: "Charlie", Email: "charlie@mail.com", Password: "charlie123", RoleID: &customerRole.ID},
-		{Name: "Diana", Email: "diana@mail.com", Password: "diana123", RoleID: &customerRole.ID},
+	user := models.User{
+		Name:     "Admin",
+		Email:    email,
+		Password: string(hashed),
+		RoleID:   &adminRole.ID,
 	}
 
-	var usersToInsert []models.User
-	for _, u := range users {
-		hashed, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
-		if err != nil {
-			return err
-		}
-		u.Password = string(hashed)
-		usersToInsert = append(usersToInsert, u)
+	if err := db.Create(&user).Error; err != nil {
+		return err
 	}
 
-	if len(usersToInsert) > 0 {
-		if err := db.Create(&usersToInsert).Error; err != nil {
-			return err
-		}
-	}
+	log.Printf("Seeded admin user: %s", email)
 	return nil
 }

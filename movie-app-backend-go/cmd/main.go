@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"movie-app-go/database"
 	"movie-app-go/internal/jobs"
 	"movie-app-go/internal/middleware"
+	"os"
 
 	"movie-app-go/database/seed"
+	"movie-app-go/internal/models"
 	"movie-app-go/internal/modules/genre"
 	"movie-app-go/internal/modules/iam"
 	"movie-app-go/internal/modules/movie"
@@ -16,7 +19,6 @@ import (
 	"movie-app-go/internal/modules/report"
 	"movie-app-go/internal/modules/schedule"
 	"movie-app-go/internal/modules/studio"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -42,6 +44,16 @@ func main() {
 	}
 
 	database.RunMigrations()
+
+	var userCount int64
+	db.Model(&models.User{}).Count(&userCount)
+	if userCount == 0 {
+		log.Println("Database kosong, menjalankan seeder...")
+		if err := seed.RunAllSeeders(db); err != nil {
+			log.Fatal("Gagal menjalankan seeder:", err)
+		}
+		log.Println("Seeding berhasil!")
+	}
 
 	queueService := jobs.NewQueueService(redisAddr)
 	workerService := jobs.NewWorkerService(redisAddr, db)

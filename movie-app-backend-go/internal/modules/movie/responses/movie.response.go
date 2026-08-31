@@ -5,6 +5,7 @@ import (
 	"movie-app-go/internal/modules/genre/responses"
 	"movie-app-go/internal/utils"
 	"os"
+	"strings"
 )
 
 type MovieResponse struct {
@@ -35,12 +36,16 @@ func ToMovieResponse(movie *models.Movie) MovieResponse {
 	}
 	var posterURL *string
 	if movie.PosterURL != nil && *movie.PosterURL != "" {
-		baseURL := os.Getenv("BASE_URL")
-		if baseURL == "" {
-			baseURL = "http://localhost:3000"
+		if strings.HasPrefix(*movie.PosterURL, "http://") || strings.HasPrefix(*movie.PosterURL, "https://") {
+			posterURL = movie.PosterURL
+		} else {
+			baseURL := os.Getenv("BASE_URL")
+			if baseURL == "" {
+				baseURL = "http://localhost:3000"
+			}
+			url := utils.GetFileURL(*movie.PosterURL, baseURL)
+			posterURL = &url
 		}
-		url := utils.GetFileURL(*movie.PosterURL, baseURL)
-		posterURL = &url
 	}
 	return MovieResponse{
 		ID:        movie.ID,

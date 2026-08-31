@@ -25,8 +25,8 @@ export default function Navbar() {
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
               <Link to="/" className="text-white hover:text-brand-primary transition-colors px-3 py-2 rounded-md font-medium">Home</Link>
-              <a href="/#movies" className="text-gray-300 hover:text-brand-primary transition-colors px-3 py-2 rounded-md font-medium">Movies</a>
-              <a href="/#schedule" className="text-gray-300 hover:text-brand-primary transition-colors px-3 py-2 rounded-md font-medium">Schedule</a>
+              <Link to="/movies" className="text-gray-300 hover:text-brand-primary transition-colors px-3 py-2 rounded-md font-medium">Movies</Link>
+              <Link to="/schedules" className="text-gray-300 hover:text-brand-primary transition-colors px-3 py-2 rounded-md font-medium">Schedule</Link>
               <a href="/#promo" className="text-gray-300 hover:text-brand-primary transition-colors px-3 py-2 rounded-md font-medium">Promos</a>
             </div>
           </div>

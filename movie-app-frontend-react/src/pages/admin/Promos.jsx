@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import Pagination from '../../components/Pagination';
 import { Pencil, Trash2, Plus, X, Tag } from 'lucide-react';
 
 export default function AdminPromos() {
   const [promos, setPromos] = useState([]);
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   
   // Modal states
   const [showModal, setShowModal] = useState(false);
@@ -36,11 +39,14 @@ export default function AdminPromos() {
     }
   };
 
-  const fetchPromos = async () => {
+  const fetchPromos = async (p = page) => {
     setLoading(true);
     try {
-      const response = await api.get('/promos?per_page=100');
-      setPromos(response.data?.data?.data || []);
+      const response = await api.get(`/promos?page=${p}&per_page=10`);
+      const d = response.data?.data;
+      setPromos(d?.data || []);
+      setPage(d?.page || 1);
+      setTotalPages(d?.total_page || 1);
     } catch (err) {
       console.error('Error fetching promos:', err);
     } finally {
@@ -50,7 +56,7 @@ export default function AdminPromos() {
 
   useEffect(() => {
     fetchDependencies();
-    fetchPromos();
+    fetchPromos(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -143,7 +149,7 @@ export default function AdminPromos() {
         await api.put(`/promos/${selectedId}`, payload);
       }
       setShowModal(false);
-      fetchPromos();
+      fetchPromos(1);
     } catch (err) {
       setApiError(err.response?.data?.message || `Failed to ${modalMode} promo config`);
     }
@@ -153,7 +159,7 @@ export default function AdminPromos() {
     if (!window.confirm('Are you sure you want to completely erase this promo code?')) return;
     try {
       await api.delete(`/promos/${id}`);
-      fetchPromos();
+      fetchPromos(1);
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to delete promo code.');
     }
@@ -408,6 +414,7 @@ export default function AdminPromos() {
             </tbody>
             </table>
         </div>
+        <Pagination page={page} totalPages={totalPages} onPageChange={fetchPromos} />
       </div>
     </div>
   );

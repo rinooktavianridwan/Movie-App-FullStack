@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
+import Pagination from '../../components/Pagination';
 import { Pencil, Trash2, Plus, X } from 'lucide-react';
 
 export default function AdminGenres() {
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   
   // Modal states
   const [showModal, setShowModal] = useState(false);
@@ -13,11 +16,14 @@ export default function AdminGenres() {
   const [name, setName] = useState('');
   const [apiError, setApiError] = useState('');
 
-  const fetchGenres = async () => {
+  const fetchGenres = async (p = page) => {
     setLoading(true);
     try {
-      const response = await api.get('/genres?per_page=100'); // fetch a decent amount
-      setGenres(response.data?.data?.data || []);
+      const response = await api.get(`/genres?page=${p}&per_page=10`);
+      const d = response.data?.data;
+      setGenres(d?.data || []);
+      setPage(d?.page || 1);
+      setTotalPages(d?.total_page || 1);
     } catch (err) {
       console.error('Error fetching genres:', err);
     } finally {
@@ -26,7 +32,7 @@ export default function AdminGenres() {
   };
 
   useEffect(() => {
-    fetchGenres();
+    fetchGenres(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -57,7 +63,7 @@ export default function AdminGenres() {
         await api.put(`/genres/${selectedGenre.id}`, { name });
       }
       setShowModal(false);
-      fetchGenres();
+      fetchGenres(1);
     } catch (err) {
       setApiError(err.response?.data?.message || `Failed to ${modalMode} genre`);
     }
@@ -67,7 +73,7 @@ export default function AdminGenres() {
     if (!window.confirm('Are you sure you want to delete this genre? This action cannot be undone.')) return;
     try {
       await api.delete(`/genres/${id}`);
-      fetchGenres();
+      fetchGenres(1);
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to delete genre. It might be in use.');
     }
@@ -162,6 +168,7 @@ export default function AdminGenres() {
             </tbody>
             </table>
         </div>
+        <Pagination page={page} totalPages={totalPages} onPageChange={fetchGenres} />
       </div>
     </div>
   );

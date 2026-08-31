@@ -1,0 +1,51 @@
+services:
+  frontend:
+    build:
+      context: ./movie-app-frontend-react
+      dockerfile: Dockerfile
+    container_name: movieapp_frontend
+    restart: unless-stopped
+    ports:
+      - "63002:80"
+    depends_on:
+      backend:
+        condition: service_started
+
+  backend:
+    build:
+      context: ./movie-app-backend-go
+      dockerfile: Dockerfile
+    container_name: movieapp_backend
+    restart: unless-stopped
+    env_file:
+      - ./movie-app-backend-go/.env
+    environment:
+      # Menembak ke IP Native VPS (Gateway Docker)
+      - DATABASE_HOST=172.17.0.1
+      - REDIS_ADDR=redis:6379
+    ports:
+      - "63003:8080"
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  redis:
+    image: redis:8.0.1
+    container_name: movieapp_redis
+    restart: unless-stopped
+    ports:
+      - "63004:6379"
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  uploads: {}
+  redis-data: {}

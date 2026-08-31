@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"movie-app-go/internal/models"
 	"net/http"
 	"os"
@@ -36,6 +37,10 @@ type tmdbGenre struct {
 
 type tmdbGenreResp struct {
 	Genres []tmdbGenre `json:"genres"`
+}
+
+type tmdbMovieDetail struct {
+	Runtime int `json:"runtime"`
 }
 
 func NewTMDBService(db *gorm.DB) *TMDBService {
@@ -87,7 +92,23 @@ func (s *TMDBService) FetchNowPlaying() error {
 		return err
 	}
 
-	for _, m := range movieData.Results {
+	for i := range movieData.Results {
+		m := &movieData.Results[i]
+
+		if m.Runtime == 0 {
+			detailReq, _ := http.NewRequest("GET", fmt.Sprintf("%s/movie/%d", baseUrl, m.ID), nil)
+			detailReq.Header.Set("Authorization", "Bearer "+token)
+			detailReq.Header.Set("accept", "application/json")
+			detailResp, err := client.Do(detailReq)
+			if err == nil {
+				var detail tmdbMovieDetail
+				if json.NewDecoder(detailResp.Body).Decode(&detail) == nil {
+					m.Runtime = detail.Runtime
+				}
+				detailResp.Body.Close()
+			}
+		}
+
 		var duration uint
 		if m.Runtime > 0 {
 			duration = uint(m.Runtime)
@@ -110,21 +131,26 @@ func (s *TMDBService) FetchNowPlaying() error {
 			}
 			genreIDs = append(genreIDs, genre.ID)
 		}
-		// Check if movie exists
-		var count int64
-		s.DB.Model(&models.Movie{}).Where("title = ?", m.Title).Count(&count)
-		if count > 0 {
-			continue
-		}
-		movie := models.Movie{
-			Title:     m.Title,
-			Overview:  m.Overview,
-			Duration:  duration,
-		}
-		if poster != "" {
-			movie.PosterURL = &poster
-		}
+
 		err = s.DB.Transaction(func(tx *gorm.DB) error {
+			var existing models.Movie
+			result := tx.Where("title = ?", m.Title).First(&existing)
+			if result.Error == nil {
+				existing.Duration = duration
+				if poster != "" {
+					existing.PosterURL = &poster
+				}
+				return tx.Save(&existing).Error
+			}
+
+			movie := models.Movie{
+				Title:    m.Title,
+				Overview: m.Overview,
+				Duration: duration,
+			}
+			if poster != "" {
+				movie.PosterURL = &poster
+			}
 			if err := tx.Create(&movie).Error; err != nil {
 				return err
 			}
