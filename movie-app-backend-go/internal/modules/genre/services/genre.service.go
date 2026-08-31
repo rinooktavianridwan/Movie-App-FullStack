@@ -34,8 +34,8 @@ func (s *GenreService) CreateGenre(req *requests.CreateGenreRequest) error {
     return s.GenreRepo.Create(&genre)
 }
 
-func (s *GenreService) GetAllGenresPaginated(page, perPage int) (repository.PaginationResult[models.Genre], error) {
-	return s.GenreRepo.GetAllPaginated(page, perPage)
+func (s *GenreService) GetAllGenresPaginated(page, perPage int, search string) (repository.PaginationResult[models.Genre], error) {
+	return s.GenreRepo.GetAllPaginated(page, perPage, search)
 }
 
 func (s *GenreService) GetGenreByID(id uint) (*models.Genre, error) {

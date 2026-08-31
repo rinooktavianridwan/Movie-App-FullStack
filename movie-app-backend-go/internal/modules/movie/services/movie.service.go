@@ -65,8 +65,8 @@ func (s *MovieService) CreateMovie(req *requests.CreateMovieRequest, posterFile 
 	})
 }
 
-func (s *MovieService) GetAllMoviesPaginated(page, perPage int) (repository.PaginationResult[models.Movie], error) {
-	return s.MovieRepo.GetAllPaginated(page, perPage)
+func (s *MovieService) GetAllMoviesPaginated(page, perPage int, search string, genreID *uint) (repository.PaginationResult[models.Movie], error) {
+	return s.MovieRepo.GetAllPaginated(page, perPage, search, genreID)
 }
 
 func (s *MovieService) GetMovieByID(id uint) (*models.Movie, error) {

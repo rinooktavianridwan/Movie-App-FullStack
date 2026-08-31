@@ -27,102 +27,37 @@ func SeedSchedules(db *gorm.DB) ([]models.Schedule, error) {
 		return []models.Schedule{}, nil
 	}
 
+	today := time.Now().Truncate(24 * time.Hour)
+
+	day := func(offset int) time.Time {
+		return today.AddDate(0, 0, offset)
+	}
+	at := func(offset, hour, minute int) time.Time {
+		return day(offset).Add(time.Duration(hour)*time.Hour + time.Duration(minute)*time.Minute)
+	}
+	movie := func(i int) uint {
+		return movies[i%len(movies)].ID
+	}
+	studio := func(i int) uint {
+		return studios[i%len(studios)].ID
+	}
+
 	schedules := []models.Schedule{
-		// August 2025 schedules
-		{
-			MovieID:   movies[0].ID,
-			StudioID:  studios[0].ID,
-			StartTime: time.Date(2025, 8, 20, 14, 0, 0, 0, time.UTC),
-			EndTime:   time.Date(2025, 8, 20, 17, 0, 0, 0, time.UTC), // 3 hours duration
-			Date:      time.Date(2025, 8, 20, 0, 0, 0, 0, time.UTC),
-			Price:     75000,
-		},
-		{
-			MovieID:   movies[0].ID,
-			StudioID:  studios[0].ID,
-			StartTime: time.Date(2025, 8, 20, 18, 0, 0, 0, time.UTC),
-			EndTime:   time.Date(2025, 8, 20, 21, 0, 0, 0, time.UTC),
-			Date:      time.Date(2025, 8, 20, 0, 0, 0, 0, time.UTC),
-			Price:     75000,
-		},
-		{
-			MovieID:   movies[0].ID,
-			StudioID:  studios[1].ID,
-			StartTime: time.Date(2025, 8, 21, 16, 0, 0, 0, time.UTC),
-			EndTime:   time.Date(2025, 8, 21, 19, 0, 0, 0, time.UTC),
-			Date:      time.Date(2025, 8, 21, 0, 0, 0, 0, time.UTC),
-			Price:     75000,
-		},
-		{
-			MovieID:   movies[0].ID,
-			StudioID:  studios[1].ID,
-			StartTime: time.Date(2025, 8, 22, 20, 0, 0, 0, time.UTC),
-			EndTime:   time.Date(2025, 8, 22, 23, 0, 0, 0, time.UTC),
-			Date:      time.Date(2025, 8, 22, 0, 0, 0, 0, time.UTC),
-			Price:     75000,
-		},
+		// Day 0 (today) — 3 studios, 2 time slots each, no overlaps
+		{MovieID: movie(0), StudioID: studio(0), StartTime: at(0, 10, 0), EndTime: at(0, 13, 0), Date: day(0), Price: 75000},
+		{MovieID: movie(1), StudioID: studio(1), StartTime: at(0, 10, 0), EndTime: at(0, 13, 0), Date: day(0), Price: 80000},
+		{MovieID: movie(2), StudioID: studio(2), StartTime: at(0, 10, 0), EndTime: at(0, 13, 0), Date: day(0), Price: 85000},
+		{MovieID: movie(3), StudioID: studio(0), StartTime: at(0, 14, 0), EndTime: at(0, 17, 0), Date: day(0), Price: 90000},
+		{MovieID: movie(0), StudioID: studio(1), StartTime: at(0, 14, 0), EndTime: at(0, 17, 0), Date: day(0), Price: 75000},
+		{MovieID: movie(1), StudioID: studio(2), StartTime: at(0, 14, 0), EndTime: at(0, 17, 0), Date: day(0), Price: 80000},
 
-		// Different movies - August (use last movie in array)
-		{
-			MovieID:   movies[len(movies)-1].ID,
-			StudioID:  studios[0].ID,
-			StartTime: time.Date(2025, 8, 21, 12, 0, 0, 0, time.UTC),
-			EndTime:   time.Date(2025, 8, 21, 15, 0, 0, 0, time.UTC),
-			Date:      time.Date(2025, 8, 21, 0, 0, 0, 0, time.UTC),
-			Price:     80000,
-		},
-		{
-			MovieID:   movies[len(movies)-1].ID,
-			StudioID:  studios[1].ID,
-			StartTime: time.Date(2025, 8, 22, 15, 0, 0, 0, time.UTC),
-			EndTime:   time.Date(2025, 8, 22, 18, 0, 0, 0, time.UTC),
-			Date:      time.Date(2025, 8, 22, 0, 0, 0, 0, time.UTC),
-			Price:     80000,
-		},
-
-		// September 2025 schedules
-		{
-			MovieID:   movies[0].ID,
-			StudioID:  studios[0].ID,
-			StartTime: time.Date(2025, 9, 1, 14, 0, 0, 0, time.UTC),
-			EndTime:   time.Date(2025, 9, 1, 17, 0, 0, 0, time.UTC),
-			Date:      time.Date(2025, 9, 1, 0, 0, 0, 0, time.UTC),
-			Price:     75000,
-		},
-		{
-			MovieID:   movies[0].ID,
-			StudioID:  studios[1].ID,
-			StartTime: time.Date(2025, 9, 2, 18, 0, 0, 0, time.UTC),
-			EndTime:   time.Date(2025, 9, 2, 21, 0, 0, 0, time.UTC),
-			Date:      time.Date(2025, 9, 2, 0, 0, 0, 0, time.UTC),
-			Price:     75000,
-		},
-		{
-			MovieID:   movies[len(movies)-1].ID,
-			StudioID:  studios[0].ID,
-			StartTime: time.Date(2025, 9, 3, 16, 0, 0, 0, time.UTC),
-			EndTime:   time.Date(2025, 9, 3, 19, 0, 0, 0, time.UTC),
-			Date:      time.Date(2025, 9, 3, 0, 0, 0, 0, time.UTC),
-			Price:     80000,
-		},
-
-		// October 2025 schedules
-		{
-			MovieID:   movies[0].ID,
-			StudioID:  studios[0].ID,
-			StartTime: time.Date(2025, 10, 10, 19, 0, 0, 0, time.UTC),
-			EndTime:   time.Date(2025, 10, 10, 22, 0, 0, 0, time.UTC),
-			Date:      time.Date(2025, 10, 10, 0, 0, 0, 0, time.UTC),
-			Price:     85000,
-		},
-		{
-			MovieID:   movies[len(movies)-1].ID,
-			StudioID:  studios[1].ID,
-			StartTime: time.Date(2025, 10, 15, 21, 0, 0, 0, time.UTC),
-			EndTime:   time.Date(2025, 10, 16, 0, 0, 0, 0, time.UTC),
-			Date:      time.Date(2025, 10, 15, 0, 0, 0, 0, time.UTC),
-			Price:     90000,
-		},
+		// Day 1 (tomorrow)
+		{MovieID: movie(2), StudioID: studio(0), StartTime: at(1, 10, 0), EndTime: at(1, 13, 0), Date: day(1), Price: 85000},
+		{MovieID: movie(3), StudioID: studio(1), StartTime: at(1, 10, 0), EndTime: at(1, 13, 0), Date: day(1), Price: 90000},
+		{MovieID: movie(0), StudioID: studio(2), StartTime: at(1, 10, 0), EndTime: at(1, 13, 0), Date: day(1), Price: 75000},
+		{MovieID: movie(1), StudioID: studio(0), StartTime: at(1, 14, 0), EndTime: at(1, 17, 0), Date: day(1), Price: 80000},
+		{MovieID: movie(2), StudioID: studio(1), StartTime: at(1, 14, 0), EndTime: at(1, 17, 0), Date: day(1), Price: 85000},
+		{MovieID: movie(3), StudioID: studio(2), StartTime: at(1, 14, 0), EndTime: at(1, 17, 0), Date: day(1), Price: 90000},
 	}
 
 	// Check existing schedules to avoid duplicates

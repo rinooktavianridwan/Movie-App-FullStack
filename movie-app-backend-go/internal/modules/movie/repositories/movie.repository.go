@@ -17,9 +17,20 @@ func NewMovieRepository(db *gorm.DB) *MovieRepository {
 	}
 }
 
-func (r *MovieRepository) GetAllPaginated(page, perPage int) (repository.PaginationResult[models.Movie], error) {
+func (r *MovieRepository) GetAllPaginated(page, perPage int, search string, genreID *uint) (repository.PaginationResult[models.Movie], error) {
+	query := r.DB.Preload("MovieGenres.Genre")
+
+	if search != "" {
+		query = query.Where("title ILIKE ?", search+"%")
+	}
+
+	if genreID != nil {
+		query = query.Joins("JOIN movie_genres ON movie_genres.movie_id = movies.id").
+			Where("movie_genres.genre_id = ?", *genreID)
+	}
+
 	return repository.Paginate[models.Movie](
-		r.DB.Preload("MovieGenres.Genre"),
+		query.Order("created_at DESC"),
 		page,
 		perPage,
 	)

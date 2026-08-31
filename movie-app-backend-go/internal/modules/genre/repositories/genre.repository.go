@@ -14,8 +14,12 @@ func NewGenreRepository(db *gorm.DB) *GenreRepository {
     return &GenreRepository{DB: db}
 }
 
-func (r *GenreRepository) GetAllPaginated(page, perPage int) (repository.PaginationResult[models.Genre], error) {
-    return repository.Paginate[models.Genre](r.DB, page, perPage)
+func (r *GenreRepository) GetAllPaginated(page, perPage int, search string) (repository.PaginationResult[models.Genre], error) {
+    query := r.DB
+    if search != "" {
+        query = query.Where("name ILIKE ?", "%"+search+"%")
+    }
+    return repository.Paginate[models.Genre](query, page, perPage)
 }
 
 func (r *GenreRepository) GetByID(id uint) (*models.Genre, error) {

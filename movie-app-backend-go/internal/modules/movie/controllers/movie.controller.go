@@ -56,8 +56,20 @@ func (c *MovieController) Create(ctx *gin.Context) {
 func (c *MovieController) GetAll(ctx *gin.Context) {
 	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 	perPage, _ := strconv.Atoi(ctx.DefaultQuery("per_page", "10"))
+	search := ctx.Query("search")
 
-	result, err := c.MovieService.GetAllMoviesPaginated(page, perPage)
+	var genreID *uint
+	if genreIDStr := ctx.Query("genre_id"); genreIDStr != "" {
+		if parsed, err := strconv.Atoi(genreIDStr); err == nil {
+			parsedUint := uint(parsed)
+			genreID = &parsedUint
+		} else {
+			ctx.JSON(http.StatusBadRequest, utils.BadRequestResponse("invalid genre_id format"))
+			return
+		}
+	}
+
+	result, err := c.MovieService.GetAllMoviesPaginated(page, perPage, search, genreID)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, utils.InternalServerErrorResponse(err.Error()))
 		return

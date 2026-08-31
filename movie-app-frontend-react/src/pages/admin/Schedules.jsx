@@ -72,13 +72,14 @@ export default function AdminSchedules() {
     setShowModal(true);
   };
 
-  const formatLocalToDatetime = (isoString) => {
+  const formatLocalToTime = (isoString) => {
     if (!isoString) return '';
     try {
       const d = new Date(isoString);
-      // Format to YYYY-MM-DDThh:mm
-      return new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0,16);
-    } catch(e) { return ''; }
+      const hh = String(d.getHours()).padStart(2, '0');
+      const mm = String(d.getMinutes()).padStart(2, '0');
+      return `${hh}:${mm}`;
+    } catch { return ''; }
   };
 
   const formatLocalToDate = (isoString) => {
@@ -94,7 +95,7 @@ export default function AdminSchedules() {
     setFormData({
       movie_id: sched.movie_id,
       studio_id: sched.studio_id,
-      start_time: formatLocalToDatetime(sched.start_time),
+      start_time: formatLocalToTime(sched.start_time),
       date: formatLocalToDate(sched.date),
       price: sched.price
     });
@@ -106,11 +107,13 @@ export default function AdminSchedules() {
     e.preventDefault();
     setApiError('');
     try {
+      const dateStr = formData.date;
+      const timeStr = formData.start_time;
       const payload = {
         movie_id: parseInt(formData.movie_id),
         studio_id: parseInt(formData.studio_id),
-        start_time: new Date(formData.start_time).toISOString(),
-        date: new Date(formData.date).toISOString(),
+        start_time: new Date(`${dateStr}T${timeStr}:00`).toISOString(),
+        date: new Date(`${dateStr}T00:00:00`).toISOString(),
         price: parseFloat(formData.price)
       };
 
@@ -196,7 +199,7 @@ export default function AdminSchedules() {
                 <div>
                   <label className="block text-sm text-gray-300 mb-2">Start Time</label>
                   <input 
-                    type="datetime-local" 
+                    type="time" 
                     value={formData.start_time}
                     onChange={(e) => setFormData({...formData, start_time: e.target.value})}
                     className="w-full bg-brand-800 border border-brand-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-primary"

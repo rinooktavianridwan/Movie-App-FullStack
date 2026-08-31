@@ -44,8 +44,9 @@ func (c *GenreController) Create(ctx *gin.Context) {
 func (c *GenreController) GetAll(ctx *gin.Context) {
 	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
 	perPage, _ := strconv.Atoi(ctx.DefaultQuery("per_page", "10"))
+	search := ctx.Query("search")
 
-	result, err := c.GenreService.GetAllGenresPaginated(page, perPage)
+	result, err := c.GenreService.GetAllGenresPaginated(page, perPage, search)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, utils.InternalServerErrorResponse(err.Error()))
 		return

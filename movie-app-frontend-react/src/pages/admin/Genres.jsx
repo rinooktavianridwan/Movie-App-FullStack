@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import Pagination from '../../components/Pagination';
-import { Pencil, Trash2, Plus, X } from 'lucide-react';
+import { Pencil, Trash2, Plus, X, Search } from 'lucide-react';
 
 export default function AdminGenres() {
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState('');
   
   // Modal states
   const [showModal, setShowModal] = useState(false);
@@ -16,10 +17,12 @@ export default function AdminGenres() {
   const [name, setName] = useState('');
   const [apiError, setApiError] = useState('');
 
-  const fetchGenres = async (p = page) => {
+  const fetchGenres = async (p = page, s = search) => {
     setLoading(true);
     try {
-      const response = await api.get(`/genres?page=${p}&per_page=10`);
+      const params = new URLSearchParams({ page: String(p), per_page: '10' });
+      if (s && s.trim()) params.set('search', s.trim());
+      const response = await api.get(`/genres?${params.toString()}`);
       const d = response.data?.data;
       setGenres(d?.data || []);
       setPage(d?.page || 1);
@@ -128,9 +131,21 @@ export default function AdminGenres() {
             <h2 className="text-2xl font-bold text-white mb-1">Genres Directory</h2>
             <p className="text-gray-400 text-sm">Manage movie classification categories.</p>
         </div>
-        <button onClick={openAddModal} className="bg-brand-primary text-brand-900 px-6 py-2.5 rounded-lg font-bold hover:bg-brand-primary/90 transition-colors shadow-lg shadow-brand-primary/20 flex items-center gap-2">
-          <Plus className="h-4 w-4" /> Add Genre
-        </button>
+        <div className="flex items-center gap-3">
+          <form onSubmit={(e) => { e.preventDefault(); fetchGenres(1, search); }} className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search genre..."
+              className="bg-brand-900 border border-brand-700 rounded-lg py-2.5 pl-9 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-brand-primary w-56"
+            />
+          </form>
+          <button onClick={openAddModal} className="bg-brand-primary text-brand-900 px-6 py-2.5 rounded-lg font-bold hover:bg-brand-primary/90 transition-colors shadow-lg shadow-brand-primary/20 flex items-center gap-2">
+            <Plus className="h-4 w-4" /> Add Genre
+          </button>
+        </div>
       </div>
 
       {/* Table */}

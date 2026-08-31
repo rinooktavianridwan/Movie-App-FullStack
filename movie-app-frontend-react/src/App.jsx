@@ -15,6 +15,7 @@ import AdminMovies from './pages/admin/Movies';
 import AdminGenres from './pages/admin/Genres';
 import AdminSchedules from './pages/admin/Schedules';
 import AdminPromos from './pages/admin/Promos';
+import AdminStudios from './pages/admin/Studios';
 
 // Custom Private Route implementation
 const ProtectedRoute = ({ children }) => {
@@ -72,6 +73,7 @@ function App() {
             <Route path="genres" element={<AdminGenres />} />
             <Route path="schedules" element={<AdminSchedules />} />
             <Route path="promos" element={<AdminPromos />} />
+            <Route path="studios" element={<AdminStudios />} />
           </Route>
         </Routes>
       </Router>

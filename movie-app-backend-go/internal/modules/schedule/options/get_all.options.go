@@ -14,6 +14,7 @@ type GetAllScheduleOptions struct {
     StudioID   *uint      `json:"studio_id,omitempty"`
     MovieID    *uint      `json:"movie_id,omitempty"`
     MovieTitle string     `json:"movie_title,omitempty"`
+    Date       *time.Time `json:"date,omitempty"`
     DateFrom   *time.Time `json:"date_from,omitempty"`
     DateTo     *time.Time `json:"date_to,omitempty"`
 }
@@ -55,8 +56,17 @@ func ParseScheduleOptions(ctx *gin.Context) (*GetAllScheduleOptions, error) {
         }
     }
 
-    // Parse movie_title
+    // Parse movie_title (prefix search for index-friendly matching)
     options.MovieTitle = ctx.Query("movie_title")
+
+    // Parse single date filter
+    if dateStr := ctx.Query("date"); dateStr != "" {
+        if date, err := time.Parse("2006-01-02", dateStr); err == nil {
+            options.Date = &date
+        } else {
+            return nil, fmt.Errorf("invalid date format, use YYYY-MM-DD")
+        }
+    }
 
     // Parse date_from
     if dateFromStr := ctx.Query("date_from"); dateFromStr != "" {

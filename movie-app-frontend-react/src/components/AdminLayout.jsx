@@ -20,6 +20,7 @@ export default function AdminLayout() {
     { path: '/admin/genres', label: 'Manage Genres' },
     { path: '/admin/schedules', label: 'Manage Schedules' },
     { path: '/admin/promos', label: 'Manage Promos' },
+    { path: '/admin/studios', label: 'Manage Studios' },
   ];
 
   const headerTitle = navItems.find(item =>

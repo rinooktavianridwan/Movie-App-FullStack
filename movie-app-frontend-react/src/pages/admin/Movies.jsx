@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import Pagination from '../../components/Pagination';
-import { X, Plus, Pencil, Trash2, Image as ImageIcon, RefreshCw } from 'lucide-react';
+import { X, Plus, Pencil, Trash2, Image as ImageIcon, RefreshCw, Search } from 'lucide-react';
 
 export default function AdminMovies() {
   const [movies, setMovies] = useState([]);
@@ -9,6 +9,7 @@ export default function AdminMovies() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [search, setSearch] = useState('');
 
   // TMDB Fetch
   const [isFetchingTMDB, setIsFetchingTMDB] = useState(false);
@@ -29,10 +30,12 @@ export default function AdminMovies() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchMovies = async (p = page) => {
+  const fetchMovies = async (p = page, s = search) => {
     try {
       setLoading(true);
-      const response = await api.get(`/movies?page=${p}&per_page=10`);
+      const params = new URLSearchParams({ page: String(p), per_page: '10' });
+      if (s && s.trim()) params.set('search', s.trim());
+      const response = await api.get(`/movies?${params.toString()}`);
       const d = response.data?.data;
       setMovies(d?.data || []);
       setPage(d?.page || 1);
@@ -269,7 +272,17 @@ export default function AdminMovies() {
             <h2 className="text-2xl font-bold text-white mb-1">Movies Directory</h2>
             <p className="text-gray-400 text-sm">Manage all titles available in the system.</p>
         </div>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3 items-center">
+          <form onSubmit={(e) => { e.preventDefault(); fetchMovies(1, search); }} className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search title..."
+              className="bg-brand-900 border border-brand-700 rounded-lg py-2.5 pl-9 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-brand-primary w-56"
+            />
+          </form>
           <button onClick={handleFetchTMDB} disabled={isFetchingTMDB} className="bg-brand-900 text-white border border-brand-700 px-4 py-2.5 rounded-lg font-medium hover:bg-brand-700 transition-colors flex items-center gap-2 disabled:opacity-60">
             <RefreshCw className={`h-4 w-4 ${isFetchingTMDB ? 'animate-spin' : ''}`} /> Fetch TMDB
           </button>

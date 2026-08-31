@@ -21,7 +21,7 @@ func (r *ScheduleRepository) GetAllWithOptions(opts *options.GetAllScheduleOptio
 
     if opts.MovieTitle != "" {
         query = query.Joins("JOIN movies ON schedules.movie_id = movies.id").
-            Where("movies.title ILIKE ?", "%"+opts.MovieTitle+"%")
+            Where("movies.title ILIKE ?", opts.MovieTitle+"%")
     }
 
     if opts.MovieID != nil {
@@ -32,6 +32,9 @@ func (r *ScheduleRepository) GetAllWithOptions(opts *options.GetAllScheduleOptio
         query = query.Where("schedules.studio_id = ?", *opts.StudioID)
     }
 
+    if opts.Date != nil {
+        query = query.Where("schedules.date = ?", *opts.Date)
+    }
     if opts.DateFrom != nil {
         query = query.Where("schedules.date >= ?", *opts.DateFrom)
     }
@@ -102,13 +105,16 @@ func (r *ScheduleRepository) GetMovieIDsWithSchedules(opts *options.GetAllSchedu
     
     if opts.MovieTitle != "" {
         query = query.Joins("JOIN movies ON schedules.movie_id = movies.id").
-            Where("movies.title ILIKE ?", "%"+opts.MovieTitle+"%")
+            Where("movies.title ILIKE ?", opts.MovieTitle+"%")
     }
     if opts.MovieID != nil {
         query = query.Where("schedules.movie_id = ?", *opts.MovieID)
     }
     if opts.StudioID != nil {
         query = query.Where("schedules.studio_id = ?", *opts.StudioID)
+    }
+    if opts.Date != nil {
+        query = query.Where("schedules.date = ?", *opts.Date)
     }
     if opts.DateFrom != nil {
         query = query.Where("schedules.date >= ?", *opts.DateFrom)
@@ -141,6 +147,9 @@ func (r *ScheduleRepository) GetSchedulesByFiltersAndMovies(opts *options.GetAll
 
     if opts.StudioID != nil {
         query = query.Where("schedules.studio_id = ?", *opts.StudioID)
+    }
+    if opts.Date != nil {
+        query = query.Where("schedules.date = ?", *opts.Date)
     }
     if opts.DateFrom != nil {
         query = query.Where("schedules.date >= ?", *opts.DateFrom)

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import Pagination from '../../components/Pagination';
-import { Pencil, Trash2, Plus, X, Tag } from 'lucide-react';
+import { Pencil, Trash2, Plus, X, Tag, Search } from 'lucide-react';
 
 export default function AdminPromos() {
   const [promos, setPromos] = useState([]);
@@ -29,6 +29,7 @@ export default function AdminPromos() {
     movie_ids: []
   });
   const [apiError, setApiError] = useState('');
+  const [movieSearch, setMovieSearch] = useState('');
 
   const fetchDependencies = async () => {
     try {
@@ -309,8 +310,18 @@ export default function AdminPromos() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Specific Movies <span className="text-gray-500 font-normal italic">(Leave empty to apply to all movies)</span></label>
+                <div className="relative mb-3">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={movieSearch}
+                    onChange={(e) => setMovieSearch(e.target.value)}
+                    placeholder="Search movie title..."
+                    className="w-full bg-brand-800 border border-brand-700/50 rounded-lg py-2.5 pl-9 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-brand-primary"
+                  />
+                </div>
                 <div className="flex flex-wrap gap-2.5 p-4 bg-brand-800 border border-brand-700/50 rounded-lg max-h-36 overflow-y-auto custom-scrollbar">
-                  {movies.map(m => (
+                  {movies.filter((m) => m.title.toLowerCase().includes(movieSearch.toLowerCase())).map(m => (
                     <label key={m.id} className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer hover:text-white transition-colors bg-brand-900/80 px-3 py-1.5 rounded-md border border-brand-700/30">
                       <input 
                         type="checkbox" 
@@ -321,6 +332,9 @@ export default function AdminPromos() {
                       <span className="truncate max-w-[200px]">{m.title}</span>
                     </label>
                   ))}
+                  {movies.filter((m) => m.title.toLowerCase().includes(movieSearch.toLowerCase())).length === 0 && (
+                    <p className="text-gray-500 text-sm">No movies match your search.</p>
+                  )}
                 </div>
               </div>
 
