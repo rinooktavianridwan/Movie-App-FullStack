@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Film, Search, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { Film, Search, User, LogOut, LayoutDashboard, Ticket } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { isAdmin } from '../utils/auth';
 
@@ -18,7 +18,7 @@ export default function Navbar() {
           <div className="flex-shrink-0 flex items-center gap-2">
             <Film className="h-8 w-8 text-brand-primary" />
             <Link to="/" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-              Antigravity
+              Movie-App
             </Link>
           </div>
           
@@ -27,7 +27,7 @@ export default function Navbar() {
               <Link to="/" className="text-white hover:text-brand-primary transition-colors px-3 py-2 rounded-md font-medium">Home</Link>
               <Link to="/movies" className="text-gray-300 hover:text-brand-primary transition-colors px-3 py-2 rounded-md font-medium">Movies</Link>
               <Link to="/schedules" className="text-gray-300 hover:text-brand-primary transition-colors px-3 py-2 rounded-md font-medium">Schedule</Link>
-              <a href="/#promo" className="text-gray-300 hover:text-brand-primary transition-colors px-3 py-2 rounded-md font-medium">Promos</a>
+              <Link to="/promos" className="text-gray-300 hover:text-brand-primary transition-colors px-3 py-2 rounded-md font-medium">Promos</Link>
             </div>
           </div>
 
@@ -37,6 +37,10 @@ export default function Navbar() {
             </button>
             {token ? (
                 <div className="flex items-center gap-4">
+                  <Link to="/my-tickets" className="text-gray-300 hover:text-brand-primary hidden sm:flex items-center gap-2 text-sm font-medium transition-colors">
+                    <Ticket className="h-4 w-4" />
+                    My Tickets
+                  </Link>
                   {isAdmin(user) && (
                     <Link to="/admin" className="text-gray-300 hover:text-brand-primary hidden sm:flex items-center gap-2 text-sm font-medium transition-colors">
                       <LayoutDashboard className="h-4 w-4" />

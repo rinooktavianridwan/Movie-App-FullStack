@@ -113,7 +113,7 @@ export default function AdminSchedules() {
         movie_id: parseInt(formData.movie_id),
         studio_id: parseInt(formData.studio_id),
         start_time: new Date(`${dateStr}T${timeStr}:00`).toISOString(),
-        date: new Date(`${dateStr}T00:00:00`).toISOString(),
+        date: new Date(`${dateStr}T12:00:00`).toISOString(),
         price: parseFloat(formData.price)
       };
 

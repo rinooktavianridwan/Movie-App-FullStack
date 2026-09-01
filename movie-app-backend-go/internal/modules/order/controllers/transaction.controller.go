@@ -36,7 +36,7 @@ func (c *TransactionController) Create(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, utils.UnauthorizedResponse("Invalid user ID"))
 		return
 	}
-	err := c.TransactionService.CreateTransaction(userIDUint, &req)
+	createdTransaction, err := c.TransactionService.CreateTransaction(userIDUint, &req)
 	if err != nil {
 		switch {
 		case errors.Is(err, utils.ErrScheduleNotFound):
@@ -56,7 +56,7 @@ func (c *TransactionController) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, utils.SuccessResponse(
 		http.StatusCreated,
 		"Transaction created successfully",
-		nil,
+		responses.ToCreatedTransactionResponse(createdTransaction),
 	))
 }
 

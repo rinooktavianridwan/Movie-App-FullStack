@@ -75,25 +75,16 @@ export default function Home() {
           )}
         </section>
 
-        {/* Schedule & Promo Section */}
+        {/* Schedule Section */}
         <section id="schedule" className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2">
             <ScheduleList />
           </div>
           
           <div className="lg:col-span-1 border-t lg:border-t-0 lg:border-l border-brand-700/50 pt-12 lg:pt-0 lg:pl-12 flex flex-col justify-start">
-            <div id="promo" className="sticky top-28">
+            <div className="sticky top-28">
               <h2 className="text-2xl font-bold text-white mb-6">Have a Promo?</h2>
               <PromoValidator />
-              
-              <div className="mt-8 glass-panel p-6 bg-brand-primary/5 border-brand-primary/20">
-                <h4 className="text-brand-primary font-semibold mb-2">Member Benefits</h4>
-                <ul className="text-sm text-gray-400 space-y-2">
-                  <li className="flex items-center gap-2">✓ Earn points on every booking</li>
-                  <li className="flex items-center gap-2">✓ Exclusive access to premieres</li>
-                  <li className="flex items-center gap-2">✓ Birthday special discounts</li>
-                </ul>
-              </div>
             </div>
           </div>
         </section>

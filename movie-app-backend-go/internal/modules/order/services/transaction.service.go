@@ -39,7 +39,7 @@ func NewTransactionService(
 	}
 }
 
-func (s *TransactionService) CreateTransaction(userID uint, req *requests.CreateTransactionRequest) error {
+func (s *TransactionService) CreateTransaction(userID uint, req *requests.CreateTransactionRequest) (*models.Transaction, error) {
 	var transaction *models.Transaction
 
 	err := s.TransactionRepo.WithTransaction(func(tx *gorm.DB) error {
@@ -145,14 +145,14 @@ func (s *TransactionService) CreateTransaction(userID uint, req *requests.Create
 	})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if err := s.QueueService.SchedulePaymentTimeout(transaction.ID, 2*time.Minute); err != nil {
 		fmt.Printf("Failed to schedule payment timeout job: %v\n", err)
 	}
 
-	return nil
+	return transaction, nil
 }
 
 func (s *TransactionService) GetTransactionsByUser(userID uint, page, perPage int) (repository.PaginationResult[models.Transaction], error) {

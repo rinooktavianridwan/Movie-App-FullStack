@@ -35,7 +35,19 @@ export default function MovieDetails() {
         setScheduleLoading(true);
         setScheduleError('');
         const res = await api.get(`/schedules?movie_id=${id}&per_page=100`);
-        setSchedules(res.data?.data?.data || []);
+        const allSchedules = res.data?.data?.data || [];
+
+        const now = new Date();
+        const activeSchedules = allSchedules.filter((schedule) => {
+          const scheduleStart = new Date(schedule.start_time);
+          return scheduleStart >= now;
+        });
+
+        const sortedSchedules = [...activeSchedules].sort((a, b) => {
+          return new Date(a.start_time) - new Date(b.start_time);
+        });
+
+        setSchedules(sortedSchedules);
       } catch (err) {
         console.error('Failed to fetch schedules:', err);
         setScheduleError(err.response?.data?.message || 'Failed to fetch schedules.');
@@ -64,6 +76,14 @@ export default function MovieDetails() {
     'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1200&auto=format&fit=crop';
   const ratingValue = movie.rating ?? movie.vote_average;
   const firstSchedule = schedules[0];
+  const groupedSchedules = schedules.reduce((acc, schedule) => {
+    const studioName = schedule.studio?.name || 'Studio';
+    if (!acc[studioName]) {
+      acc[studioName] = [];
+    }
+    acc[studioName].push(schedule);
+    return acc;
+  }, {});
 
   return (
     <div className="relative min-h-screen pt-20 pb-24">
@@ -142,26 +162,37 @@ export default function MovieDetails() {
               ) : schedules.length === 0 ? (
                 <div className="text-gray-500">No schedules found for this movie.</div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {schedules.map((sched) => (
-                    <button
-                      key={sched.id}
-                      onClick={() => navigate(`/booking/${sched.id}`)}
-                      className="glass-panel p-4 border border-brand-700/50 hover:border-brand-primary/60 transition-colors text-left"
-                    >
-                      <div className="flex items-center justify-between">
+                <div className="space-y-6">
+                  {Object.entries(groupedSchedules).map(([studioName, studioSchedules]) => (
+                    <div key={studioName} className="glass-panel p-4 border border-brand-700/30">
+                      <div className="mb-4 flex items-center justify-between">
                         <div>
-                          <p className="text-white font-semibold">{sched.studio?.name || 'Studio'}</p>
-                          <p className="text-sm text-gray-400">
-                            {new Date(sched.date).toLocaleDateString('id-ID')} •{' '}
-                            {new Date(sched.start_time).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
-                          </p>
-                        </div>
-                        <div className="text-brand-primary font-bold">
-                          Rp {Number(sched.price || 0).toLocaleString('id-ID')}
+                          <p className="text-white font-semibold text-lg">{studioName}</p>
+                          <p className="text-sm text-gray-400">Available screening slots</p>
                         </div>
                       </div>
-                    </button>
+                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                        {studioSchedules.map((sched) => (
+                          <button
+                            key={sched.id}
+                            onClick={() => navigate(`/booking/${sched.id}`)}
+                            className="rounded-xl border border-brand-700/50 bg-brand-900/30 p-4 text-left transition hover:border-brand-primary/80 hover:bg-brand-900/50"
+                          >
+                            <div className="flex items-center justify-between gap-3">
+                              <div>
+                                <p className="text-sm text-gray-400">{new Date(sched.date).toLocaleDateString('id-ID', { dateStyle: 'short' })}</p>
+                                <p className="text-lg font-bold text-white mt-1">
+                                  {new Date(sched.start_time).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                              </div>
+                              <span className="text-brand-primary font-bold text-sm">
+                                Rp {Number(sched.price || 0).toLocaleString('id-ID')}
+                              </span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}

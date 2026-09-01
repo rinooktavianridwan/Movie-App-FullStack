@@ -58,7 +58,7 @@ export default function Booking() {
 
   const seatCapacity = schedule?.studio?.seat_capacity || 0;
   const pricePerTicket = Number(schedule?.price || 0);
-  const seatsPerRow = seatCapacity > 80 ? 12 : 8;
+  const seatsPerRow = 10;
   const totalRows = Math.ceil(seatCapacity / seatsPerRow);
 
   const bookedSeatSet = useMemo(() => new Set(bookedSeats), [bookedSeats]);
@@ -82,9 +82,12 @@ export default function Booking() {
         payment_method: paymentMethod,
         promo_code: promoCode || undefined,
       });
-      setSuccessMessage('Booking created successfully. Please complete payment.');
-      setSelectedSeats([]);
-      successTimeoutRef.current = setTimeout(() => navigate('/'), 1500);
+
+      navigate('/my-tickets', {
+        state: {
+          flashMessage: 'Booking created successfully. Your order is now waiting for payment or validation.',
+        },
+      });
     } catch (err) {
       setSubmitError(err.response?.data?.message || 'Failed to create booking.');
     } finally {

@@ -59,6 +59,10 @@ type PaginatedTransactionResponse struct {
     Data      []TransactionResponse `json:"data"`
 }
 
+type CreatedTransactionResponse struct {
+    TransactionID uint `json:"transaction_id"`
+}
+
 func ToTransactionResponse(transaction *models.Transaction) TransactionResponse {
     tickets := make([]TicketInfo, len(transaction.Tickets))
     for i, ticket := range transaction.Tickets {
@@ -108,4 +112,8 @@ func ToTransactionResponses(transactions []models.Transaction) []TransactionResp
         resp[i] = ToTransactionResponse(&t)
     }
     return resp
+}
+
+func ToCreatedTransactionResponse(transaction *models.Transaction) CreatedTransactionResponse {
+    return CreatedTransactionResponse{TransactionID: transaction.ID}
 }

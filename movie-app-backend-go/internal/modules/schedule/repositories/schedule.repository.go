@@ -56,9 +56,11 @@ func (r *ScheduleRepository) GetByID(id uint) (*models.Schedule, error) {
 }
 
 func (r *ScheduleRepository) CheckScheduleConflict(studioID uint, startTime, endTime time.Time, excludeID *uint) (bool, error) {
+    businessDate := startTime.Format("2006-01-02")
+
     query := r.DB.Model(&models.Schedule{}).
-        Where("studio_id = ? AND ((start_time <= ? AND end_time > ?) OR (start_time < ? AND end_time >= ?) OR (start_time >= ? AND end_time <= ?))",
-            studioID, startTime, endTime, startTime, endTime, startTime, endTime)
+        Where("studio_id = ? AND date = ? AND start_time < ? AND end_time > ?",
+            studioID, businessDate, endTime, startTime)
 
     if excludeID != nil {
         query = query.Where("id != ?", *excludeID)

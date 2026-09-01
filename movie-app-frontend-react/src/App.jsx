@@ -9,6 +9,9 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import MovieDetails from './pages/MovieDetails';
 import Booking from './pages/Booking';
+import Payment from './pages/Payment';
+import MyTickets from './pages/MyTickets';
+import PromosPage from './pages/PromosPage';
 import AdminLayout from './components/AdminLayout';
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminMovies from './pages/admin/Movies';
@@ -51,6 +54,7 @@ function App() {
           <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
           <Route path="/movies" element={<PublicLayout><MoviesPage /></PublicLayout>} />
           <Route path="/schedules" element={<PublicLayout><SchedulesPage /></PublicLayout>} />
+          <Route path="/promos" element={<PublicLayout><PromosPage /></PublicLayout>} />
           <Route path="/movies/:id" element={<PublicLayout><MovieDetails /></PublicLayout>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -59,6 +63,16 @@ function App() {
           <Route path="/booking/:id" element={
             <ProtectedRoute>
                 <PublicLayout><Booking /></PublicLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/payment" element={
+            <ProtectedRoute>
+              <PublicLayout><Payment /></PublicLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/my-tickets" element={
+            <ProtectedRoute>
+              <PublicLayout><MyTickets /></PublicLayout>
             </ProtectedRoute>
           } />
 
