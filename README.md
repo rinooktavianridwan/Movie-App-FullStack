@@ -1,92 +1,47 @@
-# Movie-App Cinema
+# Movie-App Full Stack
 
-Movie-App Cinema is a full-stack movie booking platform built as a portfolio project. It simulates a real-world cinema ecosystem with user booking flows, schedule management, promo handling, and ticket validation across a modern React frontend and Go backend.
+A full-stack cinema booking application built with Go backend and React frontend. This project covers a complete booking flow from movie browsing, seat selection, promo usage, transaction creation, ticket validation, and admin management.
 
-## Why this project exists
+## Quick Links
 
-This project was designed to showcase a complete end-to-end product flow for a digital cinema business, not just a static landing page. It demonstrates how a real booking application handles business logic, authorization, data consistency, and user experience across multiple layers.
+- Backend guide: [movie-app-backend-go/README.md](movie-app-backend-go/README.md)
+- Frontend guide: [movie-app-frontend-react/README.md](movie-app-frontend-react/README.md)
+- Docker config: [docker-compose.yaml](docker-compose.yaml)
 
-## Project value for portfolio
+## Prerequisites
 
-This project covers the kind of workflows commonly expected in full-stack product work:
+Before running the app, make sure you have:
 
-- customer-facing booking flow
-- protected authentication flows
-- admin CRUD management
-- business rule validation
-- relational database modeling
-- API and UI integration
-- real-world operational concepts such as schedule conflict prevention and ticket validation
+- Docker and Docker Compose
+- Go 1.22 or newer
+- Node.js 18 or newer
+- npm
+- PostgreSQL (if running locally without Docker)
+- Redis (if running locally without Docker)
 
-## Core features
-
-### Customer features
-- Browse featured movies and movie details
-- Check upcoming schedules and showtimes
-- Select available seats for a movie
-- Create transactions with promo code support
-- View booking history and My Tickets page
-- Validate active tickets at the studio gate
-
-### Admin features
-- Manage movies
-- Manage genres
-- Manage studios and facilities
-- Manage promos
-- Create and update schedules
-- Prevent studio timetable conflicts
-
-### Business logic included
-- No overlapping schedules in the same studio on the same date
-- Seat reservation logic to avoid duplicate bookings
-- Ticket status flow such as active, pending, used, and cancelled
-- Protected routes for authenticated users and admin access
-
-## Tech stack
+## Tech Stack
 
 ### Frontend
 - React 19
 - Vite
 - Tailwind CSS
-- React Router DOM
+- React Router
 - Axios
-- Lucide React
 
 ### Backend
 - Go
-- Gin Web Framework
-- GORM ORM
+- Gin
+- GORM
 - PostgreSQL
-- JWT-based authentication
+- JWT authentication
+- Redis for async/payment-related jobs
 
 ### Infrastructure
 - Docker Compose
 - Nginx
 - Database migrations
 
-## Architecture overview
-
-```text
-Frontend (React + Vite)
-        |
-        v
-API Layer (Go + Gin)
-        |
-        v
-Business Logic / Services
-        |
-        v
-PostgreSQL Database
-```
-
-The system is separated into clear responsibilities:
-
-- frontend handles user interaction and presentation
-- backend exposes REST API endpoints
-- service layer handles business rules and validation
-- database stores schedules, users, tickets, promos, and transactions
-
-## Folder structure
+## Project Structure
 
 ```bash
 .
@@ -109,30 +64,35 @@ The system is separated into clear responsibilities:
 └── .gitignore
 ```
 
-## How to run
+## Run with Docker (Recommended)
 
-### 1. Clone the project
-
-```bash
-git clone https://github.com/rinooktavianridwan/Movie-App-FullStack.git
-cd Movie-App-FullStack
-```
-
-### 2. Run with Docker Compose
+This is the easiest way to run the whole application.
 
 ```bash
+cd Movie-App
 docker compose up --build
 ```
 
-### 3. Run backend manually
+### Access URLs
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:8080
+- PostgreSQL: localhost:5432
+- Redis: localhost:6379
+
+## Run Manually
+
+### Backend
 
 ```bash
 cd movie-app-backend-go
-go mod tidy
-go run cmd/main.go
+cp .env.example .env
+# configure your database and JWT settings in .env
+ go mod tidy
+ go run cmd/main.go
 ```
 
-### 4. Run frontend manually
+### Frontend
 
 ```bash
 cd movie-app-frontend-react
@@ -140,34 +100,96 @@ npm install
 npm run dev
 ```
 
-## Validation and business rules implemented
+Front-end dev server usually runs at:
 
-This project includes a few practical application rules that make it closer to real production software:
+- http://localhost:5173
 
-- same studio cannot have overlapping schedules on the same date
-- seat numbers cannot be booked twice for the same showtime
-- inactive or cancelled tickets cannot be validated for entry
-- user actions are protected by authentication and role-based routes
+## Environment Setup
 
-## Key project highlights
+Backend environment variables are defined in [movie-app-backend-go/.env.example](movie-app-backend-go/.env.example). The main variables include:
 
-- Full-stack architecture using React + Go
-- Production-style feature flow from browse to booking to validation
-- Admin panel for managing cinema content and schedules
-- Ticket flow built with status tracking for real usage scenarios
-- Portfolio-friendly and easy to explain in interviews
+- `PORT`
+- `BASE_URL`
+- `CORS_ORIGIN`
+- `DATABASE_HOST`
+- `DATABASE_PORT`
+- `DATABASE_USER`
+- `DATABASE_PASSWORD`
+- `DATABASE_NAME`
+- `JWT_SECRET`
+- `SEEDER_EMAIL`
+- `SEEDER_PASSWORD`
+- `REDIS_ADDR`
+- `TMDB_READ_ACCESS_TOKEN`
 
-## Future improvements
+## Core Features
 
-Potential next steps for this project include:
+### Customer Flow
+- Browse movies and details
+- View available schedules and showtimes
+- Choose seats and create booking
+- Apply promo codes
+- View booking history and my tickets
+- Validate ticket usage at the studio
+
+### Admin Flow
+- Manage movies, genres, studios, and facilities
+- Manage promos and schedules
+- Prevent overlapping schedules in the same studio
+- Monitor booking and ticket activity
+
+### Business Rules
+- Same studio cannot have overlapping schedules on the same date
+- Seat booking avoids duplicate reservations
+- Ticket status is tracked through active, pending, used, and cancelled states
+- User and admin actions are protected with authentication and role checks
+
+## Development Notes
+
+The app is structured as a clean full-stack architecture:
+
+```text
+React Frontend -> Gin API -> Business Services -> PostgreSQL
+                           |
+                           +-> Redis jobs / async flow
+```
+
+This separation makes the project easier to explain during portfolio reviews and interviews because it reflects real-world product flows rather than a static frontend-only demo.
+
+## Troubleshooting
+
+### Backend not starting
+- Check whether PostgreSQL and Redis are running
+- Ensure `.env` is configured correctly
+- Run `go mod tidy` if dependencies are missing
+
+### Frontend not starting
+- Run `npm install` first
+- Check whether another service is already using port 5173
+- Use `npm run build` to confirm the app compiles successfully
+
+### Docker issues
+- Run `docker compose down -v` to reset volumes if needed
+- Check logs with `docker compose logs -f`
+
+## Future Improvements
+
+Possible improvements for the project include:
 
 - QR code ticket generation
-- payment gateway integration
-- refund and cancellation flow
-- email and notification automation
-- analytics dashboard for admins
-- VIP and premium seat layouts
+- real payment gateway integration
+- cancellation and refund flow
+- email notifications
+- admin analytics dashboard
+- VIP or premium seat layouts
 
-## Project status
+## Project Status
 
-The project is functional and ready to be presented as a portfolio-grade full-stack application with working cinema booking workflows.
+The project is already functional as a portfolio-ready full-stack cinema booking system with working booking, promotion, validation, and admin logic.
+
+---
+
+For more detailed setup and implementation notes, please refer to:
+
+- [movie-app-backend-go/README.md](movie-app-backend-go/README.md)
+- [movie-app-frontend-react/README.md](movie-app-frontend-react/README.md)

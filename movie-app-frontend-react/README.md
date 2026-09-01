@@ -1,16 +1,117 @@
-# React + Vite
+# Frontend Quick Start Guide
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the React + Vite frontend for the Movie-App cinema application. It handles the user-facing booking flow, admin interface, promo display, ticket history, and other customer interactions.
 
-Currently, two official plugins are available:
+## Quick Links
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Project root: [../README.md](../README.md)
+- Backend guide: [../movie-app-backend-go/README.md](../movie-app-backend-go/README.md)
 
-## React Compiler
+## Prerequisites
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js 18 or newer
+- npm
+- Running backend service on localhost:8080
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+cd movie-app-frontend-react
+npm install
+```
+
+## Running the App
+
+### Development mode
+
+```bash
+npm run dev
+```
+
+The app will run at:
+
+- http://localhost:5173
+
+### Production build
+
+```bash
+npm run build
+```
+
+### Preview production build
+
+```bash
+npm run preview
+```
+
+## Main Features
+
+- movie browsing and details
+- schedule and showtime display
+- seat booking flow
+- promo usage and validation
+- My Tickets panel
+- transaction and payment flow
+- protected routes for authenticated users
+
+## Project Structure
+
+```bash
+movie-app-frontend-react/
+├── public/
+├── src/
+│   ├── api/
+│   ├── components/
+│   ├── context/
+│   ├── pages/
+│   ├── services/
+│   ├── utils/
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── package.json
+├── vite.config.js
+├── tailwind.config.js
+├── postcss.config.js
+├── Dockerfile
+├── nginx.conf
+└── README.md
+```
+
+## Common Commands
+
+```bash
+npm run dev
+npm run build
+npm run lint
+npm run preview
+```
+
+## Backend Connection
+
+Make sure the backend is running before using booking features. Default backend API URL is usually:
+
+```text
+http://localhost:8080
+```
+
+If the backend is changed, update the API base configuration in the frontend service layer.
+
+## Troubleshooting
+
+### App not loading
+- ensure dependencies are installed with `npm install`
+- check whether the frontend dev server started correctly on port 5173
+
+### API errors
+- confirm the backend is running
+- verify CORS and backend URL settings
+- check browser developer tools for request failures
+
+### Build fails
+- run `npm run build` to inspect the exact error output
+- ensure there are no missing imports or invalid React code
+
+## Notes
+
+This frontend is designed to work as a paired system with the Go backend in this repository. For the full app flow, use the main project documentation alongside the backend guide.
