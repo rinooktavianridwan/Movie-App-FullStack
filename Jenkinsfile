@@ -27,7 +27,7 @@ pipeline {
                         go test ./... -v
 
                         echo "=== Backend: Build check ==="
-                        go build -ldflags="-s -w" -o main .
+                        go build -ldflags="-s -w" -o main ./cmd/main.go
                     '''
                 }
             }
