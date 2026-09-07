@@ -29,22 +29,24 @@ func NewScheduleGeneratorService(
 }
 
 type GenerateSchedulesOptions struct {
-	DaysAhead   int
-	MaxMovies   int
-	OpenHour    int
-	CloseHour   int
-	BufferMins  int
-	MinPrice    float64
-	MaxPrice    float64
+	DaysAhead  int
+	MaxMovies  int
+	OpenHour   int
+	CloseHour  int
+	BufferMins int
+	MinPrice   float64
+	MaxPrice   float64
 }
 
 type GenerateSchedulesResult struct {
-	Created          int
-	Skipped          int
-	MoviesProcessed  int
-	DaysCovered      int
-	StudiosUsed      int
-	Errors           []string
+	Created         int      `json:"created"`
+	Skipped         int      `json:"skipped"`
+	MoviesProcessed int      `json:"movies_processed"`
+	DaysCovered     int      `json:"days_covered"`
+	StudiosUsed     int      `json:"studios_used"`
+	DateFrom        string   `json:"date_from"`
+	DateTo          string   `json:"date_to"`
+	Errors          []string `json:"errors"`
 }
 
 func (s *ScheduleGeneratorService) GenerateSchedules(opts GenerateSchedulesOptions) (*GenerateSchedulesResult, error) {
@@ -70,6 +72,19 @@ func (s *ScheduleGeneratorService) GenerateSchedules(opts GenerateSchedulesOptio
 		opts.MaxPrice = 100000
 	}
 
+	if opts.OpenHour > 23 {
+		opts.OpenHour = 10
+	}
+	if opts.CloseHour > 24 {
+		opts.CloseHour = 24
+	}
+	if opts.CloseHour <= opts.OpenHour {
+		opts.CloseHour = opts.OpenHour + 1
+		if opts.CloseHour > 24 {
+			opts.CloseHour = 24
+		}
+	}
+
 	movies, err := s.MovieRepo.GetLatestMovies(opts.MaxMovies)
 	if err != nil {
 		return nil, err
@@ -77,12 +92,12 @@ func (s *ScheduleGeneratorService) GenerateSchedules(opts GenerateSchedulesOptio
 
 	if len(movies) == 0 {
 		return &GenerateSchedulesResult{
-			Created:          0,
-			Skipped:          0,
-			MoviesProcessed:  0,
-			DaysCovered:      opts.DaysAhead,
-			StudiosUsed:      0,
-			Errors:           []string{"no movies found"},
+			Created:         0,
+			Skipped:         0,
+			MoviesProcessed: 0,
+			DaysCovered:     opts.DaysAhead,
+			StudiosUsed:     0,
+			Errors:          []string{"no movies found"},
 		}, nil
 	}
 
@@ -93,29 +108,34 @@ func (s *ScheduleGeneratorService) GenerateSchedules(opts GenerateSchedulesOptio
 
 	if len(studios) == 0 {
 		return &GenerateSchedulesResult{
-			Created:          0,
-			Skipped:          0,
-			MoviesProcessed:  len(movies),
-			DaysCovered:      opts.DaysAhead,
-			StudiosUsed:      0,
-			Errors:           []string{"no studios found"},
+			Created:         0,
+			Skipped:         0,
+			MoviesProcessed: len(movies),
+			DaysCovered:     opts.DaysAhead,
+			StudiosUsed:     0,
+			Errors:          []string{"no studios found"},
 		}, nil
 	}
 
 	result := &GenerateSchedulesResult{
-		Created:          0,
-		Skipped:          0,
-		MoviesProcessed:  len(movies),
-		DaysCovered:      opts.DaysAhead,
-		StudiosUsed:      len(studios),
-		Errors:           []string{},
+		Created:         0,
+		Skipped:         0,
+		MoviesProcessed: len(movies),
+		DaysCovered:     opts.DaysAhead,
+		StudiosUsed:     len(studios),
+		Errors:          []string{},
 	}
 
-	today := time.Now().Truncate(24 * time.Hour)
+	now := time.Now()
+	startDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	endDate := startDate.AddDate(0, 0, opts.DaysAhead-1)
+	result.DateFrom = startDate.Format("2006-01-02")
+	result.DateTo = endDate.Format("2006-01-02")
+
+	buffer := time.Duration(opts.BufferMins) * time.Minute
 
 	for dayOffset := 0; dayOffset < opts.DaysAhead; dayOffset++ {
-		currentDate := today.AddDate(0, 0, dayOffset)
-		dateStr := currentDate.Format("2006-01-02")
+		currentDate := startDate.AddDate(0, 0, dayOffset)
 
 		for _, studio := range studios {
 			currentTime := time.Date(
@@ -127,26 +147,29 @@ func (s *ScheduleGeneratorService) GenerateSchedules(opts GenerateSchedulesOptio
 				opts.CloseHour, 0, 0, 0, currentDate.Location(),
 			)
 
-			movieIndex := 0
-			for currentTime.Before(closeTime) && movieIndex < len(movies) {
+			for movieIndex := 0; movieIndex < len(movies); {
 				movie := movies[movieIndex]
-				slotDuration := time.Duration(movie.Duration+uint(opts.BufferMins)) * time.Minute
+				slotDuration := time.Duration(movie.Duration)*time.Minute + buffer
 				endTime := currentTime.Add(slotDuration)
 
 				if endTime.After(closeTime) {
 					break
 				}
 
-				exists, err := s.ScheduleRepo.ExistsForMovieStudioDateTime(movie.ID, studio.ID, dateStr, currentTime.Format("15:04:05"))
+				blocker, err := s.ScheduleRepo.FindFirstConflict(studio.ID, currentDate, currentTime, endTime)
 				if err != nil {
 					result.Errors = append(result.Errors, err.Error())
 					movieIndex++
 					continue
 				}
 
-				if exists {
+				if blocker != nil {
 					result.Skipped++
-					movieIndex++
+					nextStart := blocker.EndTime.Add(buffer)
+					if !nextStart.After(currentTime) {
+						nextStart = currentTime.Add(buffer)
+					}
+					currentTime = nextStart
 					continue
 				}
 
@@ -164,12 +187,13 @@ func (s *ScheduleGeneratorService) GenerateSchedules(opts GenerateSchedulesOptio
 				err = s.ScheduleRepo.Create(schedule)
 				if err != nil {
 					result.Errors = append(result.Errors, err.Error())
-				} else {
-					result.Created++
+					movieIndex++
+					continue
 				}
 
+				result.Created++
 				movieIndex++
-				currentTime = endTime.Add(time.Duration(opts.BufferMins) * time.Minute)
+				currentTime = endTime
 			}
 		}
 	}

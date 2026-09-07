@@ -42,7 +42,11 @@ func (r *ScheduleRepository) GetAllWithOptions(opts *options.GetAllScheduleOptio
         query = query.Where("schedules.date <= ?", *opts.DateTo)
     }
 
-    query = query.Order("date ASC, start_time ASC")
+    orderDirection := "ASC"
+    if opts.SortDir == "desc" {
+        orderDirection = "DESC"
+    }
+    query = query.Order("date " + orderDirection + ", start_time " + orderDirection)
 
     return repository.Paginate[models.Schedule](query, opts.Page, opts.PerPage)
 }
@@ -56,19 +60,39 @@ func (r *ScheduleRepository) GetByID(id uint) (*models.Schedule, error) {
 }
 
 func (r *ScheduleRepository) CheckScheduleConflict(studioID uint, startTime, endTime time.Time, excludeID *uint) (bool, error) {
-    businessDate := startTime.Format("2006-01-02")
+	businessDate := startTime.Format("2006-01-02")
 
-    query := r.DB.Model(&models.Schedule{}).
-        Where("studio_id = ? AND date = ? AND start_time < ? AND end_time > ?",
-            studioID, businessDate, endTime, startTime)
+	query := r.DB.Model(&models.Schedule{}).
+		Where("studio_id = ? AND date = ? AND start_time < ? AND end_time > ?",
+			studioID, businessDate, endTime, startTime)
 
-    if excludeID != nil {
-        query = query.Where("id != ?", *excludeID)
-    }
+	if excludeID != nil {
+		query = query.Where("id != ?", *excludeID)
+	}
 
-    var count int64
-    err := query.Count(&count).Error
-    return count > 0, err
+	var count int64
+	err := query.Count(&count).Error
+	return count > 0, err
+}
+
+func (r *ScheduleRepository) FindFirstConflict(studioID uint, date time.Time, startTime, endTime time.Time) (*models.Schedule, error) {
+	businessDate := date.Format("2006-01-02")
+
+	var schedule models.Schedule
+	err := r.DB.
+		Where("studio_id = ? AND date::date = ? AND start_time < ? AND end_time > ?",
+			studioID, businessDate, endTime, startTime).
+		Order("start_time ASC").
+		First(&schedule).Error
+
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &schedule, nil
 }
 
 func (r *ScheduleRepository) CountTicketsByScheduleID(scheduleID uint) (int64, error) {
@@ -162,15 +186,6 @@ func (r *ScheduleRepository) GetSchedulesByFiltersAndMovies(opts *options.GetAll
     
     err := query.Order("schedules.movie_id ASC, schedules.start_time ASC").Find(&schedules).Error
     return schedules, err
-}
-
-func (r *ScheduleRepository) ExistsForMovieStudioDateTime(movieID, studioID uint, date, startTime string) (bool, error) {
-    var count int64
-    err := r.DB.Model(&models.Schedule{}).
-        Where("movie_id = ? AND studio_id = ? AND date = ? AND start_time = ?",
-            movieID, studioID, date, startTime).
-        Count(&count).Error
-    return count > 0, err
 }
 
 func (r *ScheduleRepository) Create(schedule *models.Schedule) error {

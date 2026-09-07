@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, MapPin, Search, Ticket } from 'lucide-react';
 import api from '../services/api';
+import { groupSchedulesByDateAndStudio, getDateDisplayInfo } from '../utils/scheduleGrouping';
 
 const PAGE_SIZE = 3;
 
@@ -132,20 +133,7 @@ export default function SchedulesPage() {
           <>
             <div className="space-y-8">
               {schedules.map((movieGroup, idx) => {
-                const studioMap = movieGroup.schedules?.reduce((acc, sched) => {
-                  const key = sched.studio?.id || sched.studio_id;
-                  if (!acc[key]) {
-                    acc[key] = {
-                      id: sched.studio?.id || sched.studio_id,
-                      name: sched.studio?.name || 'Studio',
-                      schedules: [],
-                    };
-                  }
-                  acc[key].schedules.push(sched);
-                  return acc;
-                }, {});
-
-                const studioList = studioMap ? Object.values(studioMap) : [];
+                const dateGroups = groupSchedulesByDateAndStudio(movieGroup.schedules);
 
                 return (
                   <div
@@ -168,40 +156,63 @@ export default function SchedulesPage() {
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                      {studioList.map((studio, studioIdx) => (
-                        <div key={studio.id || studioIdx} className="bg-brand-900/50 border border-brand-700 rounded-xl p-4">
-                          <div className="flex items-center gap-2 mb-3 text-gray-300 font-medium">
-                            <MapPin className="h-4 w-4 text-brand-primary" />
-                            {studio.name}
-                          </div>
+                    <div className="space-y-5">
+                      {dateGroups.map((dateGroup) => {
+                        const { label, tag } = getDateDisplayInfo(dateGroup.date);
 
-                          <div className="space-y-2">
-                            {studio.schedules?.map((sched) => (
-                              <button
-                                key={sched.id}
-                                type="button"
-                                onClick={() => navigate(`/booking/${sched.id}`)}
-                                className="w-full flex items-center justify-between gap-3 bg-brand-800 hover:bg-brand-primary hover:text-white text-brand-secondary border border-brand-700 hover:border-brand-primary rounded-lg px-3 py-2 text-left transition-colors"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <Clock className="h-4 w-4" />
-                                  <span>
-                                    {new Date(sched.start_time).toLocaleTimeString('id-ID', {
-                                      hour: '2-digit',
-                                      minute: '2-digit',
-                                    })}
-                                  </span>
+                        return (
+                          <div
+                            key={dateGroup.key}
+                            className="rounded-xl border border-brand-700/60 bg-brand-900/30 overflow-hidden"
+                          >
+                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-4 py-2.5 bg-brand-800/60 border-b border-brand-700/60">
+                              <Calendar className="h-4 w-4 text-brand-primary" />
+                              <span className="text-sm font-semibold text-white">{label}</span>
+                              {tag && (
+                                <span className="text-[11px] font-bold uppercase tracking-wide text-brand-900 bg-brand-primary px-2 py-0.5 rounded-full">
+                                  {tag}
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                              {dateGroup.studios.map((studio) => (
+                                <div key={studio.id} className="bg-brand-900/50 border border-brand-700 rounded-xl p-4">
+                                  <div className="flex items-center gap-2 mb-3 text-gray-300 font-medium">
+                                    <MapPin className="h-4 w-4 text-brand-primary" />
+                                    {studio.name}
+                                  </div>
+
+                                  <div className="space-y-2">
+                                    {studio.schedules.map((sched) => (
+                                      <button
+                                        key={sched.id}
+                                        type="button"
+                                        onClick={() => navigate(`/booking/${sched.id}`)}
+                                        className="w-full flex items-center justify-between gap-3 bg-brand-800 hover:bg-brand-primary hover:text-white text-brand-secondary border border-brand-700 hover:border-brand-primary rounded-lg px-3 py-2 text-left transition-colors"
+                                      >
+                                        <div className="flex items-center gap-2">
+                                          <Clock className="h-4 w-4" />
+                                          <span>
+                                            {new Date(sched.start_time).toLocaleTimeString('id-ID', {
+                                              hour: '2-digit',
+                                              minute: '2-digit',
+                                            })}
+                                          </span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-xs text-gray-300">
+                                          <Ticket className="h-3.5 w-3.5" />
+                                          Rp {Number(sched.price || 0).toLocaleString('id-ID')}
+                                        </div>
+                                      </button>
+                                    ))}
+                                  </div>
                                 </div>
-                                <div className="flex items-center gap-2 text-xs text-gray-300">
-                                  <Ticket className="h-3.5 w-3.5" />
-                                  Rp {Number(sched.price || 0).toLocaleString('id-ID')}
-                                </div>
-                              </button>
-                            ))}
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 );

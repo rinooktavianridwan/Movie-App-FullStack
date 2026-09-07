@@ -55,7 +55,7 @@ export default function AdminSchedules() {
   const fetchSchedules = useCallback(async (p = page) => {
     setLoading(true);
     try {
-      const response = await api.get(`/schedules?page=${p}&per_page=10`);
+      const response = await api.get(`/schedules?page=${p}&per_page=10&sort_dir=desc`);
       const d = response.data?.data;
       setSchedules(d?.data || []);
       setPage(d?.page || 1);
@@ -299,8 +299,11 @@ export default function AdminSchedules() {
             {generateResult && !generating && (
               <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg text-green-300 text-sm space-y-1">
                 <div className="font-semibold">Generation Complete!</div>
+                <div>
+                  Date range: {generateResult.date_from || '-'} → {generateResult.date_to || '-'}
+                </div>
                 <div>Created: {generateResult.created} schedules</div>
-                <div>Skipped: {generateResult.skipped} (already exist)</div>
+                <div>Skipped: {generateResult.skipped} (conflicting slots)</div>
                 <div>Movies processed: {generateResult.movies_processed}</div>
                 <div>Days covered: {generateResult.days_covered}</div>
                 <div>Studios used: {generateResult.studios_used}</div>
