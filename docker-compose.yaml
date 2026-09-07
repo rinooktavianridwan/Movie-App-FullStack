@@ -27,6 +27,7 @@
 #   Postgres  → localhost:5432
 #   Redis     → localhost:6379
 #
+# BIND: All ports bound to 127.0.0.1 (localhost only)
 # VOLUME:
 #   pgdata      → data PostgreSQL (persist)
 #   redis-data  → data Redis (persist)
@@ -46,7 +47,7 @@ services:
     container_name: movieapp_frontend
     restart: unless-stopped
     ports:
-      - "5173:80"
+      - "127.0.0.1:5173:80"
     depends_on:
       backend:
         condition: service_started
@@ -63,7 +64,7 @@ services:
       - DATABASE_HOST=postgres
       - REDIS_ADDR=redis:6379
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     volumes:
       - uploads:/app/uploads
     depends_on:
@@ -81,7 +82,7 @@ services:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
       POSTGRES_DB: ${DATABASE_NAME:-movie_db}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -95,7 +96,7 @@ services:
     container_name: movieapp_redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     command: redis-server --save 20 1 --loglevel warning
     volumes:
       - redis-data:/data

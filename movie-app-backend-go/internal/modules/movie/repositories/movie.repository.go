@@ -83,3 +83,12 @@ func (r *MovieRepository) DeleteWithTx(tx *gorm.DB, id uint) error {
 func (r *MovieRepository) DeleteMovieGenresWithTx(tx *gorm.DB, movieID uint) error {
 	return tx.Where("movie_id = ?", movieID).Delete(&models.MovieGenre{}).Error
 }
+
+func (r *MovieRepository) GetLatestMovies(limit int) ([]models.Movie, error) {
+	var movies []models.Movie
+	err := r.DB.
+		Order("created_at DESC").
+		Limit(limit).
+		Find(&movies).Error
+	return movies, err
+}
