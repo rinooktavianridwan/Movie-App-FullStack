@@ -15,9 +15,10 @@ pipeline {
         // ============================================================
         // TAHAP CI: Test & Lint (Berjalan di SEMUA branch & PR)
         // ============================================================
+        // TAHAP BACKEND
         stage('Backend: Test (CI)') {
             steps {
-                dir('movie-app-backend') { 
+                dir('movie-app-backend-go') { 
                     sh '''
                         echo "=== Backend: Download dependencies ==="
                         go mod download
@@ -32,9 +33,11 @@ pipeline {
             }
         }
 
+        // TAHAP FRONTEND
         stage('Frontend: Test & Lint (CI)') {
             steps {
-                dir('movie-app-frontend') { 
+                // Ubah menjadi nama folder yang tepat
+                dir('movie-app-frontend-react') { 
                     sh '''
                         echo "=== Frontend: Install dependencies ==="
                         npm install
