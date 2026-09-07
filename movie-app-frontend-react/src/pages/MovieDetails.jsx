@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Calendar } from 'lucide-react';
 import api from '../services/api';
+import { groupSchedulesByDateAndStudio, getDateDisplayInfo } from '../utils/scheduleGrouping';
 
 export default function MovieDetails() {
   const { id } = useParams();
@@ -76,14 +78,7 @@ export default function MovieDetails() {
     'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1200&auto=format&fit=crop';
   const ratingValue = movie.rating ?? movie.vote_average;
   const firstSchedule = schedules[0];
-  const groupedSchedules = schedules.reduce((acc, schedule) => {
-    const studioName = schedule.studio?.name || 'Studio';
-    if (!acc[studioName]) {
-      acc[studioName] = [];
-    }
-    acc[studioName].push(schedule);
-    return acc;
-  }, {});
+  const dateGroups = groupSchedulesByDateAndStudio(schedules);
 
   return (
     <div className="relative min-h-screen pt-20 pb-24">
@@ -162,38 +157,56 @@ export default function MovieDetails() {
               ) : schedules.length === 0 ? (
                 <div className="text-gray-500">No schedules found for this movie.</div>
               ) : (
-                <div className="space-y-6">
-                  {Object.entries(groupedSchedules).map(([studioName, studioSchedules]) => (
-                    <div key={studioName} className="glass-panel p-4 border border-brand-700/30">
-                      <div className="mb-4 flex items-center justify-between">
-                        <div>
-                          <p className="text-white font-semibold text-lg">{studioName}</p>
-                          <p className="text-sm text-gray-400">Available screening slots</p>
+                <div className="space-y-5">
+                  {dateGroups.map((dateGroup) => {
+                    const { label, tag } = getDateDisplayInfo(dateGroup.date);
+
+                    return (
+                      <div
+                        key={dateGroup.key}
+                        className="glass-panel border border-brand-700/60 bg-brand-900/30 overflow-hidden"
+                      >
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-4 py-3 bg-brand-800/60 border-b border-brand-700/60">
+                          <Calendar className="h-4 w-4 text-brand-primary" />
+                          <span className="text-sm font-semibold text-white">{label}</span>
+                          {tag && (
+                            <span className="text-[11px] font-bold uppercase tracking-wide text-brand-900 bg-brand-primary px-2 py-0.5 rounded-full">
+                              {tag}
+                            </span>
+                          )}
                         </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                        {studioSchedules.map((sched) => (
-                          <button
-                            key={sched.id}
-                            onClick={() => navigate(`/booking/${sched.id}`)}
-                            className="rounded-xl border border-brand-700/50 bg-brand-900/30 p-4 text-left transition hover:border-brand-primary/80 hover:bg-brand-900/50"
-                          >
-                            <div className="flex items-center justify-between gap-3">
-                              <div>
-                                <p className="text-sm text-gray-400">{new Date(sched.date).toLocaleDateString('id-ID', { dateStyle: 'short' })}</p>
-                                <p className="text-lg font-bold text-white mt-1">
-                                  {new Date(sched.start_time).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
-                                </p>
-                              </div>
-                              <span className="text-brand-primary font-bold text-sm">
-                                Rp {Number(sched.price || 0).toLocaleString('id-ID')}
-                              </span>
+
+                        {dateGroup.studios.map((studio) => (
+                          <div key={studio.id} className="p-4 border-b border-brand-700/40 last:border-b-0">
+                            <div className="mb-3 flex items-center justify-between">
+                              <p className="text-white font-semibold">{studio.name}</p>
                             </div>
-                          </button>
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                              {studio.schedules.map((sched) => (
+                                <button
+                                  key={sched.id}
+                                  onClick={() => navigate(`/booking/${sched.id}`)}
+                                  className="rounded-xl border border-brand-700/50 bg-brand-900/40 p-4 text-left transition hover:border-brand-primary/80 hover:bg-brand-900/50"
+                                >
+                                  <div className="flex items-center justify-between gap-3">
+                                    <p className="text-lg font-bold text-white">
+                                      {new Date(sched.start_time).toLocaleTimeString('id-ID', {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                      })}
+                                    </p>
+                                    <span className="text-brand-primary font-bold text-sm">
+                                      Rp {Number(sched.price || 0).toLocaleString('id-ID')}
+                                    </span>
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
                         ))}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
            </div>

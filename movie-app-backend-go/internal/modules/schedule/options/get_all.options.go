@@ -9,14 +9,15 @@ import (
 )
 
 type GetAllScheduleOptions struct {
-    Page       int        `json:"page"`
-    PerPage    int        `json:"per_page"`
-    StudioID   *uint      `json:"studio_id,omitempty"`
-    MovieID    *uint      `json:"movie_id,omitempty"`
-    MovieTitle string     `json:"movie_title,omitempty"`
-    Date       *time.Time `json:"date,omitempty"`
-    DateFrom   *time.Time `json:"date_from,omitempty"`
-    DateTo     *time.Time `json:"date_to,omitempty"`
+	Page       int        `json:"page"`
+	PerPage    int        `json:"per_page"`
+	StudioID   *uint      `json:"studio_id,omitempty"`
+	MovieID    *uint      `json:"movie_id,omitempty"`
+	MovieTitle string     `json:"movie_title,omitempty"`
+	Date       *time.Time `json:"date,omitempty"`
+	DateFrom   *time.Time `json:"date_from,omitempty"`
+	DateTo     *time.Time `json:"date_to,omitempty"`
+	SortDir    string     `json:"sort_dir,omitempty"`
 }
 
 
@@ -84,6 +85,12 @@ func ParseScheduleOptions(ctx *gin.Context) (*GetAllScheduleOptions, error) {
         } else {
             return nil, fmt.Errorf("invalid date_to format, use YYYY-MM-DD")
         }
+    }
+
+    // Parse sort direction
+    options.SortDir = ctx.DefaultQuery("sort_dir", "asc")
+    if options.SortDir != "asc" && options.SortDir != "desc" {
+        options.SortDir = "asc"
     }
 
     if options.DateFrom != nil && options.DateTo != nil {

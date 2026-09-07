@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { Calendar, Clock, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { groupSchedulesByDateAndStudio, getDateDisplayInfo } from '../utils/scheduleGrouping';
 
 export default function ScheduleList() {
   const [schedules, setSchedules] = useState([]);
@@ -52,49 +53,65 @@ export default function ScheduleList() {
 
       <div className="space-y-6">
         {visibleSchedules.map((movieGroup, idx) => {
-          const studioMap = movieGroup.schedules?.reduce((acc, sched) => {
-            const key = sched.studio?.id || sched.studio_id;
-            if (!acc[key]) {
-              acc[key] = {
-                id: sched.studio?.id || sched.studio_id,
-                name: sched.studio?.name || 'Studio',
-                schedules: [],
-              };
-            }
-            acc[key].schedules.push(sched);
-            return acc;
-          }, {});
-          const studioList = studioMap ? Object.values(studioMap) : [];
+          const dateGroups = groupSchedulesByDateAndStudio(movieGroup.schedules);
+          if (dateGroups.length === 0) return null;
 
           return (
-          <div key={movieGroup.movie?.id || idx} className="glass-panel p-6 border-l-4 border-l-brand-primary">
-            <h3 className="text-2xl font-bold text-white mb-4">{movieGroup.movie?.title}</h3>
-            
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {studioList.map((studio, sIdx) => (
-                <div key={studio.id || sIdx} className="bg-brand-900/50 rounded-xl p-4 border border-brand-700">
-                  <div className="flex items-center gap-2 mb-3 text-gray-300 font-medium">
-                    <MapPin className="h-4 w-4 text-brand-accent" />
-                    {studio.name}
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {studio.schedules?.map((sched) => (
-                      <button 
-                        key={sched.id} 
-                        type="button"
-                        onClick={() => navigate(`/booking/${sched.id}`)}
-                        className="flex items-center gap-1 bg-brand-800 hover:bg-brand-primary hover:text-white text-brand-secondary border border-brand-700 hover:border-brand-primary px-3 py-1.5 rounded-lg text-sm transition-colors duration-200"
-                      >
-                        <Clock className="h-3 w-3" />
-                        {new Date(sched.start_time).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
+            <div key={movieGroup.movie?.id || idx} className="glass-panel p-6 border-l-4 border-l-brand-primary">
+              <h3 className="text-2xl font-bold text-white mb-4">{movieGroup.movie?.title}</h3>
+
+              <div className="space-y-4">
+                {dateGroups.map((dateGroup) => {
+                  const { label, tag } = getDateDisplayInfo(dateGroup.date);
+
+                  return (
+                    <div
+                      key={dateGroup.key}
+                      className="rounded-xl border border-brand-700/60 bg-brand-900/30 overflow-hidden"
+                    >
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-4 py-2.5 bg-brand-800/60 border-b border-brand-700/60">
+                        <Calendar className="h-4 w-4 text-brand-accent" />
+                        <span className="text-sm font-semibold text-white">{label}</span>
+                        {tag && (
+                          <span className="text-[11px] font-bold uppercase tracking-wide text-brand-900 bg-brand-primary px-2 py-0.5 rounded-full">
+                            {tag}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="p-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {dateGroup.studios.map((studio) => (
+                          <div key={studio.id} className="bg-brand-900/50 rounded-xl p-4 border border-brand-700">
+                            <div className="flex items-center gap-2 mb-3 text-gray-300 font-medium">
+                              <MapPin className="h-4 w-4 text-brand-accent" />
+                              {studio.name}
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              {studio.schedules.map((sched) => (
+                                <button
+                                  key={sched.id}
+                                  type="button"
+                                  onClick={() => navigate(`/booking/${sched.id}`)}
+                                  className="flex items-center gap-1 bg-brand-800 hover:bg-brand-primary hover:text-white text-brand-secondary border border-brand-700 hover:border-brand-primary px-3 py-1.5 rounded-lg text-sm transition-colors duration-200"
+                                >
+                                  <Clock className="h-3 w-3" />
+                                  {new Date(sched.start_time).toLocaleTimeString('id-ID', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                  })}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )})}
+          );
+        })}
       </div>
     </div>
   );
