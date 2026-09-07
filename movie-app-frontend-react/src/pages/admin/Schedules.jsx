@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import api from '../../services/api';
+import api, { generateSchedules } from '../../services/api';
 import Pagination from '../../components/Pagination';
-import { Pencil, Trash2, Plus, X, Clock } from 'lucide-react';
+import { Pencil, Trash2, Plus, X, Clock, Zap, Loader2 } from 'lucide-react';
 
 export default function AdminSchedules() {
   const [schedules, setSchedules] = useState([]);
@@ -23,6 +23,21 @@ export default function AdminSchedules() {
     price: ''
   });
   const [apiError, setApiError] = useState('');
+
+  // Generate Schedules Modal states
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [generateResult, setGenerateResult] = useState(null);
+  const [generateError, setGenerateError] = useState('');
+  const [generateForm, setGenerateForm] = useState({
+    days_ahead: 2,
+    max_movies: 20,
+    open_hour: 10,
+    close_hour: 23,
+    buffer_mins: 30,
+    min_price: 25000,
+    max_price: 100000,
+  });
 
   const fetchDependencies = async () => {
     try {
@@ -139,6 +154,36 @@ export default function AdminSchedules() {
     }
   };
 
+  const openGenerateModal = () => {
+    setGenerateForm({
+      days_ahead: 2,
+      max_movies: 20,
+      open_hour: 10,
+      close_hour: 23,
+      buffer_mins: 30,
+      min_price: 25000,
+      max_price: 100000,
+    });
+    setGenerateResult(null);
+    setGenerateError('');
+    setShowGenerateModal(true);
+  };
+
+  const handleGenerateSchedules = async (e) => {
+    e.preventDefault();
+    setGenerating(true);
+    setGenerateError('');
+    try {
+      const res = await generateSchedules(generateForm);
+      setGenerateResult(res.data?.data);
+      await fetchSchedules(1);
+    } catch (err) {
+      setGenerateError(err.response?.data?.message || 'Failed to generate schedules');
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   return (
     <div className="space-y-6 flex flex-col h-full relative">
       {/* Modal CRUD */}
@@ -234,15 +279,165 @@ export default function AdminSchedules() {
         </div>
       )}
 
+      {/* Generate Schedules Modal */}
+      {showGenerateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="glass-panel w-full max-w-lg p-6 bg-brand-900 border-brand-primary/30 relative max-h-[95vh] overflow-y-auto custom-scrollbar">
+            <button onClick={() => setShowGenerateModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+              <X className="h-5 w-5" />
+            </button>
+            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2 border-b border-brand-700/50 pb-4">
+              <Zap className="h-5 w-5 text-brand-primary" />
+              Generate Schedules
+            </h3>
+            {generateError && (
+              <div className="mb-4 text-red-500 bg-red-500/10 border border-red-500/20 p-3 rounded-lg text-sm">
+                {generateError}
+              </div>
+            )}
+            {generateResult && !generating && (
+              <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg text-green-300 text-sm space-y-1">
+                <div className="font-semibold">Generation Complete!</div>
+                <div>Created: {generateResult.created} schedules</div>
+                <div>Skipped: {generateResult.skipped} (already exist)</div>
+                <div>Movies processed: {generateResult.movies_processed}</div>
+                <div>Days covered: {generateResult.days_covered}</div>
+                <div>Studios used: {generateResult.studios_used}</div>
+              </div>
+            )}
+            <form onSubmit={handleGenerateSchedules} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-300 mb-2">Days Ahead</label>
+                  <input
+                    type="number"
+                    value={generateForm.days_ahead}
+                    onChange={(e) => setGenerateForm({...generateForm, days_ahead: parseInt(e.target.value) || 0})}
+                    className="w-full bg-brand-800 border border-brand-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-primary"
+                    min="1"
+                    max="30"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-300 mb-2">Max Movies</label>
+                  <input
+                    type="number"
+                    value={generateForm.max_movies}
+                    onChange={(e) => setGenerateForm({...generateForm, max_movies: parseInt(e.target.value) || 0})}
+                    className="w-full bg-brand-800 border border-brand-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-primary"
+                    min="1"
+                    max="100"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-300 mb-2">Open Hour</label>
+                  <input
+                    type="number"
+                    value={generateForm.open_hour}
+                    onChange={(e) => setGenerateForm({...generateForm, open_hour: parseInt(e.target.value) || 0})}
+                    className="w-full bg-brand-800 border border-brand-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-primary"
+                    min="0"
+                    max="23"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-300 mb-2">Close Hour</label>
+                  <input
+                    type="number"
+                    value={generateForm.close_hour}
+                    onChange={(e) => setGenerateForm({...generateForm, close_hour: parseInt(e.target.value) || 0})}
+                    className="w-full bg-brand-800 border border-brand-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-primary"
+                    min="1"
+                    max="24"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-300 mb-2">Buffer (minutes)</label>
+                  <input
+                    type="number"
+                    value={generateForm.buffer_mins}
+                    onChange={(e) => setGenerateForm({...generateForm, buffer_mins: parseInt(e.target.value) || 0})}
+                    className="w-full bg-brand-800 border border-brand-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-primary"
+                    min="0"
+                    max="120"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-300 mb-2">Min Price</label>
+                  <input
+                    type="number"
+                    value={generateForm.min_price}
+                    onChange={(e) => setGenerateForm({...generateForm, min_price: parseFloat(e.target.value) || 0})}
+                    className="w-full bg-brand-800 border border-brand-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-primary"
+                    min="0"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-300 mb-2">Max Price</label>
+                <input
+                  type="number"
+                  value={generateForm.max_price}
+                  onChange={(e) => setGenerateForm({...generateForm, max_price: parseFloat(e.target.value) || 0})}
+                  className="w-full bg-brand-800 border border-brand-700/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-primary"
+                  min="0"
+                  required
+                />
+              </div>
+              <div className="flex justify-end gap-3 pt-4 border-t border-brand-700/50">
+                <button
+                  type="button"
+                  onClick={() => setShowGenerateModal(false)}
+                  disabled={generating}
+                  className="px-4 py-2 text-gray-400 hover:text-white transition-colors disabled:opacity-60"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={generating}
+                  className="px-6 py-2 bg-brand-primary text-brand-900 font-bold rounded-lg hover:bg-brand-primary/90 transition-colors shadow-lg disabled:opacity-60"
+                >
+                  {generating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      Generating...
+                    </>
+                  ) : (
+                    'Generate Schedules'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-800 p-6 rounded-xl border border-brand-700/50 shadow-lg">
         <div>
             <h2 className="text-2xl font-bold text-white mb-1"><Clock className="inline-block h-6 w-6 mr-2 mb-1" />Showtimes Management</h2>
             <p className="text-gray-400 text-sm">Schedule movies into studio theater timeslots.</p>
         </div>
-        <button onClick={openAddModal} className="bg-brand-primary text-brand-900 px-6 py-2.5 rounded-lg font-bold hover:bg-brand-primary/90 transition-colors shadow-lg shadow-brand-primary/20 flex items-center gap-2">
-          <Plus className="h-4 w-4" /> Add Schedule
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button onClick={openGenerateModal} disabled={generating} className="bg-brand-900 text-white border border-brand-700 px-6 py-2.5 rounded-lg font-bold hover:bg-brand-700 transition-colors flex items-center gap-2 disabled:opacity-60">
+            <Zap className={`h-4 w-4 ${generating ? 'animate-spin' : ''}`} />
+            Generate Schedules
+          </button>
+          <button onClick={openAddModal} className="bg-brand-primary text-brand-900 px-6 py-2.5 rounded-lg font-bold hover:bg-brand-primary/90 transition-colors shadow-lg shadow-brand-primary/20 flex items-center gap-2">
+            <Plus className="h-4 w-4" /> Add Schedule
+          </button>
+        </div>
       </div>
 
       {/* Table */}

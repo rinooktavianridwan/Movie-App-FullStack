@@ -163,3 +163,16 @@ func (r *ScheduleRepository) GetSchedulesByFiltersAndMovies(opts *options.GetAll
     err := query.Order("schedules.movie_id ASC, schedules.start_time ASC").Find(&schedules).Error
     return schedules, err
 }
+
+func (r *ScheduleRepository) ExistsForMovieStudioDateTime(movieID, studioID uint, date, startTime string) (bool, error) {
+    var count int64
+    err := r.DB.Model(&models.Schedule{}).
+        Where("movie_id = ? AND studio_id = ? AND date = ? AND start_time = ?",
+            movieID, studioID, date, startTime).
+        Count(&count).Error
+    return count > 0, err
+}
+
+func (r *ScheduleRepository) Create(schedule *models.Schedule) error {
+    return r.DB.Create(schedule).Error
+}
