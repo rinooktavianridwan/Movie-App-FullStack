@@ -50,11 +50,11 @@ pipeline {
         }
 
         // ============================================================
-        // TAHAP CD: Deploy Production (HANYA berjalan di branch master)
+        // TAHAP CD: Deploy Production (HANYA berjalan di branch main)
         // ============================================================
         stage('Deploy Production (CD)') {
             when {
-                branch 'master' 
+                branch 'main' 
             }
             steps {
                 // Memanggil Secret File dari Jenkins Credentials
@@ -78,7 +78,7 @@ pipeline {
         
         stage('Clean Up') {
             when {
-                branch 'master'
+                branch 'main'
             }
             steps {
                 sh 'docker image prune -f'
