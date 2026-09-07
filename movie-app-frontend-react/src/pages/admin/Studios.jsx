@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
 import Pagination from '../../components/Pagination';
 import { Pencil, Trash2, Plus, X, Armchair } from 'lucide-react';
@@ -21,7 +21,7 @@ export default function AdminStudios() {
   });
   const [apiError, setApiError] = useState('');
 
-  const fetchStudios = async (p = page) => {
+  const fetchStudios = useCallback(async (p = page) => {
     setLoading(true);
     try {
       const response = await api.get(`/studios?page=${p}&per_page=10`);
@@ -34,22 +34,23 @@ export default function AdminStudios() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page]);
 
-  const fetchFacilities = async () => {
+  const fetchFacilities = useCallback(async () => {
     try {
       const response = await api.get('/facilities?per_page=100');
       setFacilities(response.data?.data?.data || []);
     } catch (err) {
       console.error('Error fetching facilities:', err);
     }
-  };
+  }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchStudios(1);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchFacilities();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchStudios, fetchFacilities]);
 
   const openAddModal = () => {
     setModalMode('add');

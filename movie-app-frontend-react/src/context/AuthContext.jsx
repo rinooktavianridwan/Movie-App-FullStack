@@ -1,13 +1,12 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-
-const AuthContext = createContext();
+import { useState, useEffect } from 'react';
+import { AuthContext } from './AuthContextContext';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : null;
   });
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
+  const [token, setToken] = useState(() => localStorage.getItem('token') || null);
 
   useEffect(() => {
     if (token) {
@@ -18,6 +17,7 @@ export function AuthProvider({ children }) {
     } else {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUser(null);
     }
   }, [token, user]);
@@ -38,5 +38,3 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
-
-export const useAuth = () => useContext(AuthContext);

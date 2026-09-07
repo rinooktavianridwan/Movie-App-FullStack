@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api, { generateSchedules } from '../../services/api';
 import Pagination from '../../components/Pagination';
 import { Pencil, Trash2, Plus, X, Clock, Zap, Loader2 } from 'lucide-react';
@@ -39,7 +39,7 @@ export default function AdminSchedules() {
     max_price: 100000,
   });
 
-  const fetchDependencies = async () => {
+  const fetchDependencies = useCallback(async () => {
     try {
       const [movRes, stuRes] = await Promise.all([
         api.get('/movies?per_page=999'),
@@ -50,9 +50,9 @@ export default function AdminSchedules() {
     } catch (err) {
       console.error('Failed to load movies/studios dependencies', err);
     }
-  };
+  }, []);
 
-  const fetchSchedules = async (p = page) => {
+  const fetchSchedules = useCallback(async (p = page) => {
     setLoading(true);
     try {
       const response = await api.get(`/schedules?page=${p}&per_page=10`);
@@ -65,13 +65,14 @@ export default function AdminSchedules() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchDependencies();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchSchedules(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchDependencies, fetchSchedules]);
 
   const openAddModal = () => {
     setModalMode('add');

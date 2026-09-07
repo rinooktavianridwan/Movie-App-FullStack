@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
 import Pagination from '../../components/Pagination';
 import { X, Plus, Pencil, Trash2, Image as ImageIcon, RefreshCw, Search } from 'lucide-react';
@@ -24,13 +24,7 @@ export default function AdminMovies() {
   const [crudError, setCrudError] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    fetchMovies(1);
-    fetchGenres();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const fetchMovies = async (p = page, s = search) => {
+  const fetchMovies = useCallback(async (p = page, s = search) => {
     try {
       setLoading(true);
       const params = new URLSearchParams({ page: String(p), per_page: '10' });
@@ -45,17 +39,23 @@ export default function AdminMovies() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search]);
 
-  const fetchGenres = async () => {
+  const fetchGenres = useCallback(async () => {
     try {
       const response = await api.get('/genres?per_page=100');
       setGenres(response.data?.data?.data || []);
     } catch (err) {
       console.error(err);
     }
-  };
+  }, []);
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchMovies(1);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchGenres();
+  }, [fetchMovies, fetchGenres]);
 
   const handleFetchTMDB = async () => {
     setIsFetchingTMDB(true);

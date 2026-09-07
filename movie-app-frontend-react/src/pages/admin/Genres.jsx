@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
 import Pagination from '../../components/Pagination';
 import { Pencil, Trash2, Plus, X, Search } from 'lucide-react';
@@ -17,7 +17,7 @@ export default function AdminGenres() {
   const [name, setName] = useState('');
   const [apiError, setApiError] = useState('');
 
-  const fetchGenres = async (p = page, s = search) => {
+  const fetchGenres = useCallback(async (p = page, s = search) => {
     setLoading(true);
     try {
       const params = new URLSearchParams({ page: String(p), per_page: '10' });
@@ -32,12 +32,12 @@ export default function AdminGenres() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchGenres(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchGenres]);
 
   const openAddModal = () => {
     setModalMode('add');

@@ -18,8 +18,9 @@ export default function Booking() {
   const successTimeoutRef = useRef(null);
 
   useEffect(() => {
+    const timeoutId = successTimeoutRef.current;
     return () => {
-      if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current);
+      if (timeoutId) clearTimeout(timeoutId);
     };
   }, []);
 
