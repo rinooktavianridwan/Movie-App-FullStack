@@ -57,10 +57,10 @@ func (s *ScheduleGeneratorService) GenerateSchedules(opts GenerateSchedulesOptio
 		opts.MaxMovies = 20
 	}
 	if opts.OpenHour <= 0 {
-		opts.OpenHour = 10
+		opts.OpenHour = 8
 	}
 	if opts.CloseHour <= 0 {
-		opts.CloseHour = 23
+		opts.CloseHour = 24
 	}
 	if opts.BufferMins <= 0 {
 		opts.BufferMins = 30
@@ -73,7 +73,7 @@ func (s *ScheduleGeneratorService) GenerateSchedules(opts GenerateSchedulesOptio
 	}
 
 	if opts.OpenHour > 23 {
-		opts.OpenHour = 10
+		opts.OpenHour = 8
 	}
 	if opts.CloseHour > 24 {
 		opts.CloseHour = 24

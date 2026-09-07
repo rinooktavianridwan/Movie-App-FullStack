@@ -32,8 +32,8 @@ export default function AdminSchedules() {
   const [generateForm, setGenerateForm] = useState({
     days_ahead: 2,
     max_movies: 20,
-    open_hour: 10,
-    close_hour: 23,
+    open_hour: 8,
+    close_hour: 24,
     buffer_mins: 30,
     min_price: 25000,
     max_price: 100000,
@@ -159,8 +159,8 @@ export default function AdminSchedules() {
     setGenerateForm({
       days_ahead: 2,
       max_movies: 20,
-      open_hour: 10,
-      close_hour: 23,
+      open_hour: 8,
+      close_hour: 24,
       buffer_mins: 30,
       min_price: 25000,
       max_price: 100000,
