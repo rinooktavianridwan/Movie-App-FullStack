@@ -68,8 +68,8 @@ pipeline {
                     sh '''
                         echo "=== Menyiapkan Environment Variables ==="
                         # Mengkopi file secret dari memori Jenkins ke folder proyek masing-masing
-                        cp $SECRET_BE_ENV ./movie-app-backend/.env
-                        cp $SECRET_FE_ENV ./movie-app-frontend/.env
+                        cp $SECRET_BE_ENV ./movie-app-backend-go/.env
+                        cp $SECRET_FE_ENV ./movie-app-frontend-react/.env
 
                         echo "=== Memulai deployment ke VPS ==="
                         docker compose -f docker-compose.prod.yml build
