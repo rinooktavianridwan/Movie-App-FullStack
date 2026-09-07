@@ -35,8 +35,8 @@ func (j *ScheduleGeneratorCron) Start() {
 		result, err := svc.GenerateSchedules(services.GenerateSchedulesOptions{
 			DaysAhead:  2,
 			MaxMovies:  20,
-			OpenHour:   10,
-			CloseHour:  23,
+			OpenHour:   8,
+			CloseHour:  24,
 			BufferMins: 30,
 			MinPrice:   25000,
 			MaxPrice:   100000,
