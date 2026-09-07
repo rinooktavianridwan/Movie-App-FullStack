@@ -30,6 +30,12 @@ func (r *StudioRepository) GetByID(id uint) (*models.Studio, error) {
     return &studio, nil
 }
 
+func (r *StudioRepository) GetAll() ([]models.Studio, error) {
+    var studios []models.Studio
+    err := r.DB.Find(&studios).Error
+    return studios, err
+}
+
 func (r *StudioRepository) CountSchedulesByStudioID(studioID uint) (int64, error) {
     var count int64
     err := r.DB.Model(&models.Schedule{}).Where("studio_id = ?", studioID).Count(&count).Error

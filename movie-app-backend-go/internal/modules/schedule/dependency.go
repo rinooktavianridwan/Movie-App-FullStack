@@ -13,25 +13,31 @@ import (
 )
 
 type ScheduleModule struct {
-	ScheduleController *controllers.ScheduleController
+	ScheduleController        *controllers.ScheduleController
+	ScheduleGeneratorController *controllers.ScheduleGeneratorController
+	ScheduleGeneratorService    *services.ScheduleGeneratorService
 }
 
 func NewScheduleModule(db *gorm.DB) *ScheduleModule {
 	studioRepo := studiorepos.NewStudioRepository(db)
 	scheduleRepo := repositories.NewScheduleRepository(db)
-    movieRepo := movierepos.NewMovieRepository(db)
+	movieRepo := movierepos.NewMovieRepository(db)
 	scheduleService := services.NewScheduleService(scheduleRepo, movieRepo, studioRepo)
+	scheduleGeneratorService := services.NewScheduleGeneratorService(scheduleRepo, movieRepo, studioRepo)
 
 	return &ScheduleModule{
-		ScheduleController: controllers.NewScheduleController(scheduleService),
+		ScheduleController:         controllers.NewScheduleController(scheduleService),
+		ScheduleGeneratorController: controllers.NewScheduleGeneratorController(scheduleGeneratorService),
+		ScheduleGeneratorService:    scheduleGeneratorService,
 	}
 }
 
 func RegisterRoutes(rg *gin.RouterGroup, module *ScheduleModule, mf *middleware.Factory) {
-    rg.POST("/schedules", mf.Auth(), mf.RequirePermission("schedules.create"), module.ScheduleController.Create)
-    rg.GET("/schedules", module.ScheduleController.GetAll)
-    rg.GET("/schedules/grouped", module.ScheduleController.GetGrouped)
-    rg.GET("/schedules/:id", module.ScheduleController.GetByID)
-    rg.PUT("/schedules/:id", mf.Auth(), mf.RequirePermission("schedules.update"), module.ScheduleController.Update)
-    rg.DELETE("/schedules/:id", mf.Auth(), mf.RequirePermission("schedules.delete"), module.ScheduleController.Delete)
+	rg.POST("/schedules", mf.Auth(), mf.RequirePermission("schedules.create"), module.ScheduleController.Create)
+	rg.GET("/schedules", module.ScheduleController.GetAll)
+	rg.GET("/schedules/grouped", module.ScheduleController.GetGrouped)
+	rg.GET("/schedules/:id", module.ScheduleController.GetByID)
+	rg.PUT("/schedules/:id", mf.Auth(), mf.RequirePermission("schedules.update"), module.ScheduleController.Update)
+	rg.DELETE("/schedules/:id", mf.Auth(), mf.RequirePermission("schedules.delete"), module.ScheduleController.Delete)
+	rg.POST("/admin/schedules/generate", mf.Auth(), mf.RequirePermission("schedules.create"), module.ScheduleGeneratorController.GenerateSchedules)
 }

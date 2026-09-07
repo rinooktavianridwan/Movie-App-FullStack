@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Gift, TicketPercent, Clock3, CheckCircle2, AlertTriangle } from 'lucide-react';
 import api from '../services/api';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
 export default function PromosPage() {
   const { token } = useAuth();
@@ -10,37 +10,37 @@ export default function PromosPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const fetchPromos = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const res = await api.get('/promos?page=1&per_page=50');
+      const list = res.data?.data?.data || [];
+      const now = new Date();
+
+      const availablePromos = list.filter((promo) => {
+        const validFrom = new Date(promo.valid_from);
+        const validUntil = new Date(promo.valid_until);
+        return promo.is_active && validFrom <= now && validUntil >= now;
+      });
+
+      setPromos(availablePromos);
+    } catch (err) {
+      console.error('Failed to fetch promos:', err);
+      setError(err.response?.data?.message || 'Failed to load available promos.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (!token) {
-      setLoading(false);
       return;
     }
 
-    const fetchPromos = async () => {
-      try {
-        setLoading(true);
-        setError('');
-        const res = await api.get('/promos?page=1&per_page=50');
-        const list = res.data?.data?.data || [];
-        const now = new Date();
-
-        const availablePromos = list.filter((promo) => {
-          const validFrom = new Date(promo.valid_from);
-          const validUntil = new Date(promo.valid_until);
-          return promo.is_active && validFrom <= now && validUntil >= now;
-        });
-
-        setPromos(availablePromos);
-      } catch (err) {
-        console.error('Failed to fetch promos:', err);
-        setError(err.response?.data?.message || 'Failed to load available promos.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchPromos();
-  }, [token]);
+  }, [fetchPromos, token]);
 
   const promoCards = useMemo(() => {
     return promos.map((promo) => ({

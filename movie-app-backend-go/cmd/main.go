@@ -89,6 +89,9 @@ func main() {
 	tmdbCron := jobs.NewTMDBCron(db)
 	tmdbCron.Start()
 
+	scheduleGeneratorCron := jobs.NewScheduleGeneratorCron(db)
+	scheduleGeneratorCron.Start()
+
 	// Setup Gin
 	r := gin.Default()
 	r.Use(middleware.CORSMiddleware())

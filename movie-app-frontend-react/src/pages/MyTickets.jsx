@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Ticket, CalendarDays, Clock3, MapPin, CreditCard, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, Wallet } from 'lucide-react';
 import api from '../services/api';
@@ -21,7 +21,7 @@ export default function MyTickets() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [expandedIds, setExpandedIds] = useState([]);
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -34,11 +34,12 @@ export default function MyTickets() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchTransactions();
-  }, []);
+  }, [fetchTransactions]);
 
   const groupedTransactions = useMemo(
     () =>

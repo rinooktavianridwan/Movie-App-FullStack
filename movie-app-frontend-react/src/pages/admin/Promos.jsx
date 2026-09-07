@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
 import Pagination from '../../components/Pagination';
 import { Pencil, Trash2, Plus, X, Tag, Search } from 'lucide-react';
@@ -31,16 +31,16 @@ export default function AdminPromos() {
   const [apiError, setApiError] = useState('');
   const [movieSearch, setMovieSearch] = useState('');
 
-  const fetchDependencies = async () => {
+  const fetchDependencies = useCallback(async () => {
     try {
       const response = await api.get('/movies?per_page=999');
       setMovies(response.data?.data?.data || []);
     } catch (err) {
       console.error('Failed to load movies dependency', err);
     }
-  };
+  }, []);
 
-  const fetchPromos = async (p = page) => {
+  const fetchPromos = useCallback(async (p = page) => {
     setLoading(true);
     try {
       const response = await api.get(`/promos?page=${p}&per_page=10`);
@@ -53,20 +53,21 @@ export default function AdminPromos() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchDependencies();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchPromos(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchDependencies, fetchPromos]);
 
   const formatLocalToDatetime = (isoString) => {
     if (!isoString) return '';
     try {
       const d = new Date(isoString);
       return new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0,16);
-    } catch(e) { return ''; }
+    } catch { return ''; }
   };
 
   const openAddModal = () => {

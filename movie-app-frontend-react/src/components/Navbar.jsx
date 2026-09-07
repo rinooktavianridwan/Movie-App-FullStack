@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Film, Search, User, LogOut, LayoutDashboard, Ticket } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { isAdmin } from '../utils/auth';
 
 export default function Navbar() {

@@ -29,4 +29,6 @@ api.interceptors.response.use(
   }
 );
 
+export const generateSchedules = (data) => api.post('/admin/schedules/generate', data);
+
 export default api;

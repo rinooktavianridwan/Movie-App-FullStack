@@ -6,7 +6,7 @@ services:
     container_name: movieapp_frontend
     restart: unless-stopped
     ports:
-      - "63002:80"
+      - "127.0.0.1:63002:80"
     depends_on:
       backend:
         condition: service_started
@@ -24,7 +24,7 @@ services:
       - DATABASE_HOST=172.17.0.1
       - REDIS_ADDR=redis:6379
     ports:
-      - "63003:8080"
+      - "127.0.0.1:63003:8080"
     volumes:
       - uploads:/app/uploads
     depends_on:
@@ -36,7 +36,7 @@ services:
     container_name: movieapp_redis
     restart: unless-stopped
     ports:
-      - "63004:6379"
+      - "127.0.0.1:63004:6379"
     command: redis-server --save 20 1 --loglevel warning
     volumes:
       - redis-data:/data
