@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Ticket, CalendarDays, Clock3, MapPin, CreditCard, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, Wallet } from 'lucide-react';
 import api from '../services/api';
 
@@ -12,7 +12,6 @@ const STATUS_STYLES = {
 
 export default function MyTickets() {
   const location = useLocation();
-  const navigate = useNavigate();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
