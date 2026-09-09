@@ -10,7 +10,6 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import MovieDetails from './pages/MovieDetails';
 import Booking from './pages/Booking';
-import Payment from './pages/Payment';
 import MyTickets from './pages/MyTickets';
 import PromosPage from './pages/PromosPage';
 import AdminLayout from './components/AdminLayout';
@@ -64,11 +63,6 @@ function App() {
           <Route path="/booking/:id" element={
             <ProtectedRoute>
                 <PublicLayout><Booking /></PublicLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/payment" element={
-            <ProtectedRoute>
-              <PublicLayout><Payment /></PublicLayout>
             </ProtectedRoute>
           } />
           <Route path="/my-tickets" element={

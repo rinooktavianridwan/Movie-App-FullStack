@@ -141,7 +141,7 @@ export default function Booking() {
               return (
                 <div key={rowLabel} className="flex items-center justify-between gap-2">
                   <span className="text-gray-500 font-bold w-6 text-center">{rowLabel}</span>
-                  <div className="flex gap-2 lg:gap-4 justify-center flex-1 flex-wrap">
+                  <div className="grid grid-cols-10 gap-2 lg:gap-3 justify-items-center">
                     {Array.from({ length: seatsPerRow }).map((__, colIndex) => {
                       const seatNumber = rowIndex * seatsPerRow + colIndex + 1;
                       if (seatNumber > seatCapacity) return null;
@@ -217,11 +217,19 @@ export default function Booking() {
                   {new Date(schedule.end_time).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-start">
                 <span className="text-gray-400">Seats:</span>
-                <span className="text-white font-bold">
-                  {selectedSeats.length > 0 ? selectedSeats.join(', ') : '-'}
-                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedSeats.length > 0 ? (
+                    selectedSeats.map((seat) => (
+                      <span key={seat} className="inline-flex items-center rounded-full bg-brand-primary/20 text-brand-primary text-xs font-medium px-2 py-1 border border-brand-primary/30">
+                        {seat}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-white font-bold">-</span>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -235,7 +243,7 @@ export default function Booking() {
             <div className="pt-4 border-t border-brand-700/50">
               <div className="flex justify-between items-end">
                 <span className="text-gray-300 font-medium">Total Amount</span>
-                <span className="text-3xl font-extrabold text-brand-primary">
+                <span className="text-2xl font-bold text-brand-primary">
                   Rp {(selectedSeats.length * pricePerTicket).toLocaleString('id-ID')}
                 </span>
               </div>
