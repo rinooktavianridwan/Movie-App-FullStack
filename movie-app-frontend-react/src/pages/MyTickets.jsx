@@ -92,17 +92,18 @@ export default function MyTickets() {
     );
   };
 
-  const handleOpenPayment = (transaction) => {
-    const firstTicket = (transaction.tickets || [])[0] || {};
-    navigate('/payment', {
-      state: {
-        transactionId: transaction.id,
-        schedule: firstTicket.schedule,
-        selectedSeats: (transaction.tickets || []).map((ticket) => ticket.seat_number),
-        paymentMethod: transaction.payment_method || 'credit_card',
-        totalAmount: Number(transaction.total_amount || 0),
-      },
-    });
+  const handlePayNow = async (transaction) => {
+    try {
+      setSuccessMessage('Processing payment...');
+      await api.post(`/transactions/${transaction.id}/payment`, {
+        payment_status: 'success',
+        payment_note: `${transaction.payment_method === 'credit_card' ? 'Credit Card' : 'E-Wallet'} payment`,
+      });
+      setSuccessMessage('Payment successful! Your tickets are now ready to validate.');
+      await fetchTransactions();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Payment failed. Please try again.');
+    }
   };
 
   if (loading) {
@@ -238,7 +239,7 @@ export default function MyTickets() {
 
                         {transaction.payment_status === 'pending' ? (
                           <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-3 text-sm text-yellow-200">
-                            Payment gateway is not integrated yet. Use the temporary payment page to continue this booking.
+                            Payment pending. Click "Pay now" below to complete your booking.
                           </div>
                         ) : transaction.payment_status === 'success' ? (
                           <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-sm text-emerald-200">
@@ -268,7 +269,7 @@ export default function MyTickets() {
                         {transaction.payment_status === 'pending' ? (
                           <button
                             type="button"
-                            onClick={() => handleOpenPayment(transaction)}
+                            onClick={() => handlePayNow(transaction)}
                             className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2.5 text-sm font-bold text-brand-900 transition hover:bg-brand-primary/90"
                           >
                             Pay now
