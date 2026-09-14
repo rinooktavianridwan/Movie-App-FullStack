@@ -107,18 +107,18 @@ export default function MyTickets() {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-24 max-w-6xl mx-auto px-6 lg:px-8 text-gray-400">
+      <div className="min-h-screen pt-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-gray-400">
         Loading your tickets...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 max-w-6xl mx-auto px-6 lg:px-8">
-      <div className="mb-8 flex items-center justify-between gap-4">
+    <div className="min-h-screen pt-24 pb-12 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-brand-primary text-sm uppercase tracking-[0.2em]">My tickets</p>
-          <h1 className="text-3xl font-bold text-white mt-2">Booking history & validation</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mt-2">Booking history & validation</h1>
         </div>
         <div className="hidden md:flex items-center gap-2 text-gray-400 text-sm border border-brand-700/50 rounded-full px-4 py-2">
           <Ticket className="h-4 w-4 text-brand-primary" />
@@ -173,7 +173,7 @@ export default function MyTickets() {
               const isExpanded = expandedIds.includes(transaction.id);
 
               return (
-                <div key={transaction.id} className="glass-panel p-5 border border-brand-700/30">
+                <div key={transaction.id} className="glass-panel p-4 sm:p-5 border border-brand-700/30">
                   <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
                     <div className="space-y-3 flex-1">
                       <div className="flex items-center gap-3 flex-wrap">
@@ -184,8 +184,8 @@ export default function MyTickets() {
                       </div>
 
                       <div>
-                        <h2 className="text-2xl font-bold text-white">{movie.title}</h2>
-                        <p className="text-gray-400 mt-1">
+                        <h2 className="text-xl sm:text-2xl font-bold text-white">{movie.title}</h2>
+                        <p className="text-gray-400 mt-1 break-words">
                           {studio.name} • Seats {transaction.seatNumbers.join(', ')}
                         </p>
                       </div>
@@ -207,7 +207,7 @@ export default function MyTickets() {
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-3 min-w-[240px]">
+                    <div className="flex flex-col gap-3 w-full sm:min-w-[240px] sm:w-auto">
                       <div className="flex items-center justify-between text-sm text-gray-400">
                         <span>Payment</span>
                         <span className="text-white font-medium">{transaction.payment_status || 'N/A'}</span>

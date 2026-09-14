@@ -74,11 +74,11 @@ export default function SchedulesPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
-            <Calendar className="h-9 w-9 text-brand-primary" />
-            <h1 className="text-4xl font-bold text-white">All Schedules</h1>
+            <Calendar className="h-8 w-8 sm:h-9 sm:w-9 text-brand-primary shrink-0" />
+            <h1 className="text-3xl sm:text-4xl font-bold text-white">All Schedules</h1>
           </div>
 
           <form onSubmit={handleSearchSubmit} className="w-full max-w-3xl flex flex-col gap-3 sm:flex-row">
@@ -138,11 +138,11 @@ export default function SchedulesPage() {
                 return (
                   <div
                     key={movieGroup.movie?.id || idx}
-                    className="glass-panel p-6 border-l-4 border-l-brand-primary"
+                    className="glass-panel p-4 sm:p-6 border-l-4 border-l-brand-primary"
                   >
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
                       <div>
-                        <h2 className="text-3xl font-bold text-white">{movieGroup.movie?.title}</h2>
+                        <h2 className="text-2xl sm:text-3xl font-bold text-white">{movieGroup.movie?.title}</h2>
                         <p className="mt-2 text-gray-400 max-w-2xl">
                           {movieGroup.movie?.overview || 'No synopsis available yet.'}
                         </p>

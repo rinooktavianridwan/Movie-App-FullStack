@@ -54,10 +54,10 @@ export default function PromosPage() {
 
   if (!token) {
     return (
-      <div className="min-h-screen pt-24 pb-12 max-w-5xl mx-auto px-6 lg:px-8">
+      <div className="min-h-screen pt-24 pb-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="glass-panel border border-brand-700/30 p-10 text-center">
           <Gift className="h-12 w-12 mx-auto text-brand-primary mb-4" />
-          <h1 className="text-3xl font-bold text-white mb-3">Available promotions</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-3">Available promotions</h1>
           <p className="text-gray-400 mb-6">
             Sign in to see active promo codes and special offers for your next booking.
           </p>
@@ -73,11 +73,11 @@ export default function PromosPage() {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 max-w-6xl mx-auto px-6 lg:px-8">
-      <div className="mb-8 flex items-center justify-between gap-4">
+    <div className="min-h-screen pt-24 pb-12 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-brand-primary text-sm uppercase tracking-[0.2em]">Promos</p>
-          <h1 className="text-3xl font-bold text-white mt-2">Available offers</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mt-2">Available offers</h1>
         </div>
         <div className="hidden md:flex items-center gap-2 text-gray-400 text-sm border border-brand-700/50 rounded-full px-4 py-2">
           <TicketPercent className="h-4 w-4 text-brand-primary" />
@@ -101,12 +101,12 @@ export default function PromosPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           {promoCards.map((promo) => (
             <div key={promo.id} className="glass-panel border border-brand-700/30 p-5 flex flex-col gap-4">
-              <div className="flex items-start justify-between gap-4">
-                <div>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
                   <p className="text-brand-primary text-xs uppercase tracking-[0.2em]">Promo</p>
-                  <h2 className="text-2xl font-bold text-white mt-2">{promo.name}</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-white mt-2 break-words">{promo.name}</h2>
                 </div>
-                <div className="rounded-xl border border-brand-primary/40 bg-brand-primary/10 px-3 py-2 text-sm font-bold text-brand-primary">
+                <div className="rounded-xl border border-brand-primary/40 bg-brand-primary/10 px-3 py-2 text-sm font-bold text-brand-primary shrink-0">
                   {promo.discountLabel}
                 </div>
               </div>

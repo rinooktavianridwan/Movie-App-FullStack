@@ -364,9 +364,9 @@ export default function AdminPromos() {
       )}
 
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-800 p-6 rounded-xl border border-brand-700/50 shadow-lg">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-800 p-4 sm:p-6 rounded-xl border border-brand-700/50 shadow-lg">
         <div>
-            <h2 className="text-2xl font-bold text-white mb-1"><Tag className="inline-block h-6 w-6 mr-2 mb-1 text-brand-primary" />Promos Management</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1"><Tag className="inline-block h-6 w-6 mr-2 mb-1 text-brand-primary" />Promos Management</h2>
             <p className="text-gray-400 text-sm">Configure discount codes, percentages, and applicability rules.</p>
         </div>
         <button onClick={openAddModal} className="bg-brand-primary text-brand-900 px-6 py-2.5 rounded-lg font-bold hover:bg-brand-primary/90 transition-colors shadow-lg shadow-brand-primary/20 flex items-center gap-2">

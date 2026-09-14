@@ -70,11 +70,11 @@ export default function MoviesPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
-            <Film className="h-9 w-9 text-brand-primary" />
-            <h1 className="text-4xl font-bold text-white">All Movies</h1>
+            <Film className="h-8 w-8 sm:h-9 sm:w-9 text-brand-primary shrink-0" />
+            <h1 className="text-3xl sm:text-4xl font-bold text-white">All Movies</h1>
           </div>
 
           <form onSubmit={handleSearchSubmit} className="w-full max-w-2xl flex flex-col gap-3 sm:flex-row">

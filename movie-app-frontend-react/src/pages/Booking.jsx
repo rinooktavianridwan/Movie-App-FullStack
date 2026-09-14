@@ -109,39 +109,40 @@ export default function Booking() {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-12 max-w-7xl mx-auto px-6 lg:px-8">
-      <div className="mb-8 flex items-center justify-between">
+    <div className="min-h-screen pt-24 pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mb-6 sm:mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Select Your Seats</h1>
-          <p className="text-gray-400 mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Select Your Seats</h1>
+          <p className="text-gray-400 mt-2 break-words">
             {schedule.movie?.title} • {schedule.studio?.name} •{' '}
             {new Date(schedule.start_time).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
           </p>
         </div>
         <button
           onClick={() => navigate(-1)}
-          className="px-4 py-2 border border-brand-700/50 rounded-lg text-gray-300 hover:bg-brand-800 transition-colors"
+          className="w-full sm:w-auto px-4 py-2 border border-brand-700/50 rounded-lg text-gray-300 hover:bg-brand-800 transition-colors"
         >
           Cancel Booking
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
         {/* Seat Layout Map */}
-        <div className="lg:col-span-2 glass-panel p-8 border-brand-700/30 flex flex-col items-center">
-          <div className="w-full max-w-2xl h-8 mb-16 relative">
+        <div className="lg:col-span-2 glass-panel p-4 sm:p-6 lg:p-8 border-brand-700/30 flex flex-col items-center">
+          <div className="w-full max-w-xl h-8 mb-8 sm:mb-16 relative">
             <div className="absolute inset-x-0 bottom-0 h-10 border-t-4 border-brand-primary/50 rounded-t-[50%] blur-[1px]"></div>
             <div className="absolute inset-0 bg-brand-primary/10 rounded-t-[50%] blur-xl"></div>
             <p className="text-center text-brand-primary text-xs tracking-[0.5em] uppercase absolute w-full top-2">Screen</p>
           </div>
 
-          <div className="flex flex-col gap-6 w-full max-w-xl">
+          <div className="w-full max-w-xl overflow-x-auto pb-2">
+            <div className="flex flex-col gap-3 sm:gap-6 w-max mx-auto">
             {Array.from({ length: totalRows }).map((_, rowIndex) => {
               const rowLabel = String.fromCharCode(65 + rowIndex);
               return (
-                <div key={rowLabel} className="flex items-center justify-between gap-2">
-                  <span className="text-gray-500 font-bold w-6 text-center">{rowLabel}</span>
-                  <div className="grid grid-cols-10 gap-2 lg:gap-3 justify-items-center">
+                <div key={rowLabel} className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="text-gray-500 font-bold w-4 sm:w-6 text-xs sm:text-sm text-center">{rowLabel}</span>
+                  <div className="grid grid-cols-10 gap-1 sm:gap-2 lg:gap-3 justify-items-center">
                     {Array.from({ length: seatsPerRow }).map((__, colIndex) => {
                       const seatNumber = rowIndex * seatsPerRow + colIndex + 1;
                       if (seatNumber > seatCapacity) return null;
@@ -154,7 +155,7 @@ export default function Booking() {
                             disabled={isReserved}
                             onClick={() => toggleSeat(seatNumber)}
                             className={`
-                              w-8 h-8 rounded-t-lg rounded-b-sm font-medium text-[10px] transition-all duration-200
+                              w-5 h-5 sm:w-8 sm:h-8 rounded-t-lg rounded-b-sm font-medium text-[8px] sm:text-[10px] transition-all duration-200
                               ${
                                 isReserved
                                   ? 'bg-gray-600/50 cursor-not-allowed border border-gray-700/50'
@@ -170,13 +171,14 @@ export default function Booking() {
                       );
                     })}
                   </div>
-                  <span className="text-gray-500 font-bold w-6 text-center">{rowLabel}</span>
+                  <span className="text-gray-500 font-bold w-4 sm:w-6 text-xs sm:text-sm text-center">{rowLabel}</span>
                 </div>
               );
             })}
+            </div>
           </div>
 
-          <div className="mt-16 flex gap-6 justify-center w-full">
+          <div className="mt-8 sm:mt-16 flex flex-wrap gap-4 sm:gap-6 justify-center w-full">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded-t bg-brand-800 border border-brand-700"></div>
               <span className="text-xs text-gray-400">Available</span>
@@ -194,17 +196,17 @@ export default function Booking() {
 
         {/* Checkout Summary Column */}
         <div className="lg:col-span-1">
-          <div className="glass-panel p-8 border-brand-primary/20 sticky top-28 space-y-6">
+          <div className="glass-panel p-5 sm:p-8 border-brand-primary/20 lg:sticky lg:top-28 space-y-6">
             <h3 className="text-xl font-bold text-white border-b border-brand-700/50 pb-4">Booking Summary</h3>
 
             <div className="space-y-3 text-sm">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-400">Movie:</span>
-                <span className="text-white font-semibold">{schedule.movie?.title}</span>
+              <div className="flex justify-between items-start gap-3">
+                <span className="text-gray-400 shrink-0">Movie:</span>
+                <span className="text-white font-semibold text-right break-words">{schedule.movie?.title}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-400">Studio:</span>
-                <span className="text-white">{schedule.studio?.name}</span>
+              <div className="flex justify-between items-start gap-3">
+                <span className="text-gray-400 shrink-0">Studio:</span>
+                <span className="text-white text-right">{schedule.studio?.name}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-400">Date:</span>
@@ -243,7 +245,7 @@ export default function Booking() {
             <div className="pt-4 border-t border-brand-700/50">
               <div className="flex justify-between items-end">
                 <span className="text-gray-300 font-medium">Total Amount</span>
-                <span className="text-2xl font-bold text-brand-primary">
+                <span className="text-xl sm:text-2xl font-bold text-brand-primary">
                   Rp {(selectedSeats.length * pricePerTicket).toLocaleString('id-ID')}
                 </span>
               </div>

@@ -428,9 +428,9 @@ export default function AdminSchedules() {
       )}
 
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-800 p-6 rounded-xl border border-brand-700/50 shadow-lg">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-800 p-4 sm:p-6 rounded-xl border border-brand-700/50 shadow-lg">
         <div>
-            <h2 className="text-2xl font-bold text-white mb-1"><Clock className="inline-block h-6 w-6 mr-2 mb-1" />Showtimes Management</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1"><Clock className="inline-block h-6 w-6 mr-2 mb-1" />Showtimes Management</h2>
             <p className="text-gray-400 text-sm">Schedule movies into studio theater timeslots.</p>
         </div>
         <div className="flex flex-wrap gap-3">

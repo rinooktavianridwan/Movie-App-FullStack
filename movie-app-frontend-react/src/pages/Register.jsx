@@ -28,14 +28,14 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-900 flex items-center justify-center relative overflow-hidden">
+    <div className="min-h-screen bg-brand-900 flex items-center justify-center relative overflow-hidden px-4 py-24">
       {/* Background elements */}
       <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/20 rounded-full blur-[120px]"></div>
       <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-primary/20 rounded-full blur-[120px]"></div>
 
-      <div className="glass-panel w-full max-w-md p-8 relative z-10 border-brand-primary/20">
+      <div className="glass-panel w-full max-w-md p-6 sm:p-8 relative z-10 border-brand-primary/20">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2 tracking-widest uppercase">Create<span className="text-brand-primary">Account</span></h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 tracking-wide sm:tracking-widest uppercase">Create<span className="text-brand-primary">Account</span></h1>
           <p className="text-gray-400 text-sm">Join the ultimate movie experience</p>
         </div>
 
