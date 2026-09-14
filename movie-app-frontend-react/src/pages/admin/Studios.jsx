@@ -118,8 +118,8 @@ export default function AdminStudios() {
     <div className="space-y-6 flex flex-col h-full relative">
       {/* Modal CRUD */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="glass-panel w-full max-w-lg p-6 bg-brand-900 border-brand-primary/30 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="glass-panel w-full max-w-lg max-h-[90vh] overflow-y-auto p-5 sm:p-6 bg-brand-900 border-brand-primary/30 relative">
             <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
               <X className="h-5 w-5" />
             </button>
@@ -190,9 +190,9 @@ export default function AdminStudios() {
       )}
 
       {/* Header */}
-      <div className="flex justify-between items-center bg-brand-800 p-6 rounded-xl border border-brand-700/50 shadow-lg">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-800 p-4 sm:p-6 rounded-xl border border-brand-700/50 shadow-lg">
         <div>
-          <h2 className="text-2xl font-bold text-white mb-1"><Armchair className="inline-block h-6 w-6 mr-2 mb-1 text-brand-primary" />Studios Directory</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-white mb-1"><Armchair className="inline-block h-6 w-6 mr-2 mb-1 text-brand-primary" />Studios Directory</h2>
           <p className="text-gray-400 text-sm">Manage theater studios and their facilities.</p>
         </div>
         <button onClick={openAddModal} className="bg-brand-primary text-brand-900 px-6 py-2.5 rounded-lg font-bold hover:bg-brand-primary/90 transition-colors shadow-lg shadow-brand-primary/20 flex items-center gap-2">

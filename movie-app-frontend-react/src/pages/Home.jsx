@@ -30,23 +30,23 @@ export default function Home() {
   const visibleMovies = featuredMovies.slice(0, window.innerWidth < 768 ? 6 : 4);
 
   return (
-    <div className="flex flex-col gap-20 pb-20">
+    <div className="flex flex-col gap-14 sm:gap-20 pb-20">
       <HeroSection movie={featuredMovies[0]} />
       
-      <main className="max-w-7xl mx-auto px-6 lg:px-8 w-full flex flex-col gap-24">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col gap-16 sm:gap-24">
         
         {/* Now Playing Section */}
         <section id="movies">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold text-white flex items-center gap-3">
-              <span className="w-2 h-8 bg-brand-primary rounded-full"></span>
+          <div className="flex items-center justify-between gap-4 mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3 min-w-0">
+              <span className="w-2 h-7 sm:h-8 bg-brand-primary rounded-full shrink-0"></span>
               Now Playing
             </h2>
             {featuredMovies.length > (window.innerWidth < 768 ? 6 : 4) && (
               <button
                 type="button"
                 onClick={() => navigate('/movies')}
-                className="text-brand-primary hover:text-white transition-colors text-sm font-medium"
+                className="text-brand-primary hover:text-white transition-colors text-sm font-medium shrink-0"
               >
                 View All →
               </button>
@@ -76,12 +76,12 @@ export default function Home() {
         </section>
 
         {/* Schedule Section */}
-        <section id="schedule" className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <section id="schedule" className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12">
           <div className="lg:col-span-2">
             <ScheduleList />
           </div>
           
-          <div className="lg:col-span-1 border-t lg:border-t-0 lg:border-l border-brand-700/50 pt-12 lg:pt-0 lg:pl-12 flex flex-col justify-start">
+          <div className="lg:col-span-1 border-t lg:border-t-0 lg:border-l border-brand-700/50 pt-10 lg:pt-0 lg:pl-12 flex flex-col justify-start">
             <div className="sticky top-28">
               <h2 className="text-2xl font-bold text-white mb-6">Have a Promo?</h2>
               <PromoValidator />

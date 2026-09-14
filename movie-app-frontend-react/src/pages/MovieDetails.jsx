@@ -88,10 +88,10 @@ export default function MovieDetails() {
         style={{ backgroundImage: `url(${poster})` }}
       ></div>
       
-      <div className="relative max-w-6xl mx-auto px-6 lg:px-8 mt-12 grid grid-cols-1 lg:grid-cols-3 gap-16">
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-16">
         {/* Poster Image */}
         <div className="lg:col-span-1">
-           <div className="rounded-2xl overflow-hidden shadow-2xl border border-brand-700/50 aspect-[2/3] sticky top-32">
+           <div className="rounded-2xl overflow-hidden shadow-2xl border border-brand-700/50 aspect-[2/3] w-full max-w-xs mx-auto lg:max-w-none lg:sticky lg:top-32">
               <img 
                 src={poster}
                 alt={movie.title} 
@@ -103,12 +103,12 @@ export default function MovieDetails() {
         {/* Info Column */}
         <div className="lg:col-span-2 space-y-8">
            <div>
-               <div className="flex items-center gap-3 text-brand-primary font-medium text-sm mb-4 tracking-wider uppercase">
+               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-brand-primary font-medium text-sm mb-4 tracking-wider uppercase">
                    <span>{genreLabel}</span>
                    <span className="w-1.5 h-1.5 rounded-full bg-brand-primary"></span>
                    <span>{movie.duration} Minutes</span>
                </div>
-               <h1 className="text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight">
+               <h1 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-white mb-6 leading-tight">
                    {movie.title}
                </h1>
                {ratingValue && (
@@ -133,7 +133,7 @@ export default function MovieDetails() {
                <button 
                   onClick={() => firstSchedule && navigate(`/booking/${firstSchedule.id}`)}
                   disabled={!firstSchedule}
-                  className={`px-8 py-4 rounded-xl text-lg transition-all shadow-lg shadow-brand-primary/25 flex items-center gap-3 justify-center ${
+                  className={`px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg transition-all shadow-lg shadow-brand-primary/25 flex items-center gap-3 justify-center w-full sm:w-auto ${
                     firstSchedule
                       ? 'bg-brand-primary text-brand-900 hover:bg-brand-primary/90 hover:-translate-y-1'
                       : 'bg-brand-800 text-gray-500 cursor-not-allowed'
@@ -142,7 +142,7 @@ export default function MovieDetails() {
                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" /></svg>
                    {firstSchedule ? 'Book Tickets Now' : 'No Showtimes Available'}
                </button>
-               <button disabled className="px-8 py-4 glass-panel text-white/50 font-bold rounded-xl text-lg cursor-not-allowed flex items-center gap-3 justify-center">
+               <button disabled className="px-6 sm:px-8 py-3.5 sm:py-4 glass-panel text-white/50 font-bold rounded-xl text-base sm:text-lg cursor-not-allowed flex items-center gap-3 justify-center w-full sm:w-auto">
                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                    Watch Trailer
                </button>

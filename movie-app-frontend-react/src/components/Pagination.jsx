@@ -16,11 +16,11 @@ export default function Pagination({ page, totalPages, onPageChange }) {
   };
 
   return (
-    <div className="flex items-center justify-between gap-2 py-3 px-5 border-t border-brand-700/30 bg-brand-800/60">
+    <div className="flex flex-wrap items-center justify-between gap-2 py-3 px-3 sm:px-5 border-t border-brand-700/30 bg-brand-800/60">
       <span className="text-sm text-gray-500">
         Page {page} of {totalPages}
       </span>
-      <div className="flex items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
         <button
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1}

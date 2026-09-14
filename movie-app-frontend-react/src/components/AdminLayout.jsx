@@ -86,12 +86,12 @@ export default function AdminLayout() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Header */}
-        <header className="h-20 border-b border-brand-700/50 bg-brand-900/50 backdrop-blur-md flex items-center justify-between px-8 shrink-0">
-          <div className="flex items-center gap-4">
-            <button onClick={() => setSidebarOpen(true)} className="md:hidden text-gray-300 hover:text-white">
+        <header className="h-16 sm:h-20 border-b border-brand-700/50 bg-brand-900/50 backdrop-blur-md flex items-center justify-between px-4 sm:px-8 shrink-0">
+          <div className="flex items-center gap-4 min-w-0">
+            <button onClick={() => setSidebarOpen(true)} className="md:hidden text-gray-300 hover:text-white shrink-0">
               <Menu className="h-6 w-6" />
             </button>
-            <h2 className="text-xl font-bold text-white">
+            <h2 className="text-lg sm:text-xl font-bold text-white truncate">
               {headerTitle}
             </h2>
           </div>
@@ -103,7 +103,7 @@ export default function AdminLayout() {
         </header>
 
         {/* Page Content */}
-        <div className="p-8 flex-1 overflow-y-auto">
+        <div className="p-4 sm:p-6 lg:p-8 flex-1 overflow-y-auto">
           <Outlet />
         </div>
       </main>

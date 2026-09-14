@@ -160,8 +160,8 @@ export default function AdminMovies() {
 
       {/* Modal Manual CRUD */}
       {showCrudModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm py-10">
-          <div className="glass-panel w-full max-w-2xl max-h-full overflow-y-auto p-8 bg-brand-900 border-brand-primary/30 relative custom-scrollbar">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 py-6">
+          <div className="glass-panel w-full max-w-2xl max-h-full overflow-y-auto p-5 sm:p-8 bg-brand-900 border-brand-primary/30 relative custom-scrollbar">
             <button onClick={() => setShowCrudModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
               <X className="h-6 w-6" />
             </button>
@@ -267,20 +267,20 @@ export default function AdminMovies() {
       )}
 
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-800 p-6 rounded-xl border border-brand-700/50 shadow-lg">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-800 p-4 sm:p-6 rounded-xl border border-brand-700/50 shadow-lg">
         <div>
-            <h2 className="text-2xl font-bold text-white mb-1">Movies Directory</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">Movies Directory</h2>
             <p className="text-gray-400 text-sm">Manage all titles available in the system.</p>
         </div>
-        <div className="flex flex-wrap gap-3 items-center">
-          <form onSubmit={(e) => { e.preventDefault(); fetchMovies(1, search); }} className="relative">
+        <div className="flex flex-wrap gap-3 items-center w-full md:w-auto">
+          <form onSubmit={(e) => { e.preventDefault(); fetchMovies(1, search); }} className="relative w-full sm:w-auto">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search title..."
-              className="bg-brand-900 border border-brand-700 rounded-lg py-2.5 pl-9 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-brand-primary w-56"
+              className="bg-brand-900 border border-brand-700 rounded-lg py-2.5 pl-9 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-brand-primary w-full sm:w-56"
             />
           </form>
           <button onClick={handleFetchTMDB} disabled={isFetchingTMDB} className="bg-brand-900 text-white border border-brand-700 px-4 py-2.5 rounded-lg font-medium hover:bg-brand-700 transition-colors flex items-center gap-2 disabled:opacity-60">
